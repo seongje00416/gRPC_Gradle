@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.grpc";
+
+service SaveService {
+  rpc SaveName( SaveMessage.SaveRequest ) returns ( SaveMessage.SaveResponse ) {}
+}
+
+service ReadService {
+  rpc ReadName( ReadMessage.ReadRequest ) returns ( ReadMessage.ReadResponse ) {}
+}
+
+message SaveMessage {
+  message SaveRequest {
+    int32 nameID = 1;
+    string name = 2;
+  }
+
+  message SaveResponse {
+    int32 nameID = 1;
+    string name = 2;
+  }
+}
+
+message ReadMessage {
+  message ReadRequest {
+    int32 nameID = 1;
+  }
+
+  message ReadResponse {
+    string name = 1;
+    int32 nameID = 2;
+  }
+}
