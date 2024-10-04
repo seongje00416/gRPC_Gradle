@@ -1,18 +1,14 @@
 package server;
 
 import exception.GRPCServerException;
+import server.service.LoadStudentServiceImpl;
+import server.service.LoadCourseServiceImpl;
+
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.stub.StreamObserver;
-import com.example.grpc.SaveServiceGrpc;
-import com.example.grpc.ReadServiceGrpc;
-import com.example.grpc.SaveMessage;
-import com.example.grpc.ReadMessage;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.net.BindException;
-import java.util.Vector;
 
 public class GRPCServer {
 
@@ -25,8 +21,8 @@ public class GRPCServer {
             // 서버에 gRPC 서비스를 세팅하고 작동시키는 코드
         try {
             server = ServerBuilder.forPort( 8080 )
-                    .addService( new SaveServiceImpl() )
-                    .addService( new ReadServiceImpl() )
+                    .addService( new LoadStudentServiceImpl() )
+                    .addService( new LoadCourseServiceImpl() )
                     .build()
                     .start();
             server.awaitTermination();
@@ -44,31 +40,6 @@ public class GRPCServer {
             if( server != null ){
                 server.shutdown();
             }
-        }
-    }
-
-    static class SaveServiceImpl extends SaveServiceGrpc.SaveServiceImplBase {
-        @Override
-        public void saveName(SaveMessage.SaveRequest request, StreamObserver<SaveMessage.SaveResponse> responseObserver) {
-            SaveMessage.SaveResponse response = SaveMessage.SaveResponse.newBuilder()
-                    .setName( request.getName() )
-                    .setNameID( 0 )
-                    .build();
-            savedName = request.getName();
-            responseObserver.onNext( response );
-            responseObserver.onCompleted();
-        }
-    }
-
-    static class ReadServiceImpl extends ReadServiceGrpc.ReadServiceImplBase {
-        @Override
-        public void readName( ReadMessage.ReadRequest request, StreamObserver<ReadMessage.ReadResponse> responseObserver) {
-            ReadMessage.ReadResponse response = ReadMessage.ReadResponse.newBuilder()
-                    .setNameID( 0 )
-                    .setName( savedName )
-                    .build();
-            responseObserver.onNext( response );
-            responseObserver.onCompleted();
         }
     }
 }

@@ -11,6 +11,14 @@ service ReadService {
   rpc ReadName( ReadMessage.ReadRequest ) returns ( ReadMessage.ReadResponse ) {}
 }
 
+service LoadStudentService {
+  rpc LoadStudent( LoadStudentMessage.LoadStudentRequest ) returns ( LoadStudentMessage.LoadStudentResponse ){}
+}
+
+service LoadCourseService {
+  rpc LoadCourse( LoadCourseMessage.LoadCourseRequest ) returns ( LoadCourseMessage.LoadCourseResponse ){}
+}
+
 message SaveMessage {
   message SaveRequest {
     int32 nameID = 1;
@@ -31,5 +39,40 @@ message ReadMessage {
   message ReadResponse {
     string name = 1;
     int32 nameID = 2;
+  }
+}
+
+message LoadStudentMessage {
+  message LoadStudentRequest {
+    int32 studentID = 1;
+  }
+
+  message Student {
+    int32 studentID = 1;
+    string lastName = 2;
+    string firstName = 3;
+    string department = 4;
+    repeated int32 clearCourse = 5;
+  }
+
+  message LoadStudentResponse {
+    repeated Student students = 1;
+  }
+}
+
+message LoadCourseMessage {
+  message LoadCourseRequest {
+    int32 courseID = 1;
+  }
+
+  message Course {
+    int32 courseID = 1;
+    string professor = 2;
+    string courseName = 3;
+    repeated int32  prerequisiteCourse = 4;
+  }
+
+  message LoadCourseResponse {
+    repeated Course courses = 1;
   }
 }

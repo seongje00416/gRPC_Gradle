@@ -1,30 +1,29 @@
 package client;
 
+import com.example.grpc.*;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import com.example.grpc.SaveServiceGrpc;
-import com.example.grpc.ReadServiceGrpc;
-import com.example.grpc.SaveMessage;
-import com.example.grpc.ReadMessage;
+import server.entity.Student;
 
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 public class GRPCClient {
 
     private final ManagedChannel channel;
-    private final SaveServiceGrpc.SaveServiceBlockingStub saveStub;
-    private final ReadServiceGrpc.ReadServiceBlockingStub readStub;
+    private final LoadStudentServiceGrpc.LoadStudentServiceBlockingStub loadStudentStub;
+    private final LoadCourseServiceGrpc.LoadCourseServiceBlockingStub loadCourseStub;
 
     public GRPCClient(String host, int port) {
         try {
             this.channel = ManagedChannelBuilder.forAddress(host, port)
                     .usePlaintext()
                     .build();
-            this.saveStub = SaveServiceGrpc.newBlockingStub(channel);
-            this.readStub = ReadServiceGrpc.newBlockingStub(channel);
+            this.loadStudentStub = LoadStudentServiceGrpc.newBlockingStub(channel);
+            this.loadCourseStub = LoadCourseServiceGrpc.newBlockingStub(channel);
         } catch (Exception e) {
             throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);
         }
@@ -38,28 +37,51 @@ public class GRPCClient {
         }
     }
 
-    public void saveName(String name) throws GRPCClientException {
-        try {
-            SaveMessage.SaveRequest saveRequest = SaveMessage.SaveRequest.newBuilder()
-                    .setNameID(0)
-                    .setName(name)
+    public void loadStudent() throws GRPCClientException {
+        try{
+            LoadStudentMessage.LoadStudentRequest loadStudentRequest = LoadStudentMessage.LoadStudentRequest.newBuilder()
                     .build();
-            SaveMessage.SaveResponse saveResponse = saveStub.saveName(saveRequest);
-            System.out.println("Execute Result: " + saveResponse.getNameID() + " " + saveResponse.getName());
-        } catch (StatusRuntimeException e) {
-            throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to save name: " + e.getStatus(), e);
+            LoadStudentMessage.LoadStudentResponse loadStudentResponse = loadStudentStub.loadStudent(loadStudentRequest);
+            System.out.println( "===================== Student List =====================");
+            for(LoadStudentMessage.Student student : loadStudentResponse.getStudentsList() ){
+                System.out.println( "-----------------------------------------------------------" );
+                System.out.println( "Student Number: " + student.getStudentID() );
+                System.out.println( "Student Name: " + student.getLastName() + " " + student.getFirstName() );
+                System.out.println( "Student Department: " + student.getDepartment() );
+                System.out.print( "Success Register Course: ");
+                for( Integer courseNumber : student.getClearCourseList() ){
+                    System.out.print( courseNumber + " " );
+                }
+                System.out.print('\n');
+                System.out.println( "-----------------------------------------------------------" );
+            }
+            System.out.println("=========================================================");
+        } catch ( StatusRuntimeException e) {
+            throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);
         }
     }
 
-    public void readName() throws GRPCClientException {
-        try {
-            ReadMessage.ReadRequest readRequest = ReadMessage.ReadRequest.newBuilder()
-                    .setNameID(0)
+    public void loadCourse() throws GRPCClientException {
+        try{
+            LoadCourseMessage.LoadCourseRequest loadCourseRequest = LoadCourseMessage.LoadCourseRequest.newBuilder()
                     .build();
-            ReadMessage.ReadResponse readResponse = readStub.readName(readRequest);
-            System.out.println("Saved Name: " + readResponse.getName());
-        } catch (StatusRuntimeException e) {
-            throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to read name: " + e.getStatus(), e);
+            LoadCourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse(loadCourseRequest);
+            System.out.println( "===================== Course List =====================");
+            for(LoadCourseMessage.Course course : loadCourseResponse.getCoursesList() ){
+                System.out.println( "-----------------------------------------------------------" );
+                System.out.println( "Course Number: " + course.getCourseID() );
+                System.out.println( "Course Name: " + course.getCourseName() );
+                System.out.println( "Professor: " + course.getProfessor() );
+                System.out.print( "Pre Requisite Courses: ");
+                for( Integer courseNumber : course.getPrerequisiteCourseList() ){
+                    System.out.print( courseNumber + " " );
+                }
+                System.out.print('\n');
+                System.out.println( "-----------------------------------------------------------" );
+            }
+            System.out.println("=========================================================");
+        } catch( StatusRuntimeException e) {
+            throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load course", e);
         }
     }
 
@@ -85,12 +107,9 @@ public class GRPCClient {
 
                 switch (flag) {
                     case 1:
-                        System.out.print("Input your Name: ");
-                        String name = sc.nextLine();
-                        client.saveName(name);
-                        break;
+                        client.loadStudent();
                     case 2:
-                        client.readName();
+                        client.loadCourse();
                         break;
                     case 0:
                         return;
