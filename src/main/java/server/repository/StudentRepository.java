@@ -10,32 +10,32 @@ public class StudentRepository {
 
     public Vector<Student> getAllStudent(){
         DatabaseConnection conn = new DatabaseConnection();
-        String query = "SELECT * FROM student";
+        String query = "SELECT * FROM students";
         ResultSet rs = conn.getResult(query);
 
         Vector<Student> students = new Vector<Student>();
         try{
-            while( rs.next()){
+            while( true ){
                 Student student = new Student();
-                student.setStudentID( rs.getInt("studentID") );
-                student.setFirstName( rs.getString("firstName") );
-                student.setLastName( rs.getString("lastName") );
+                student.setStudentID( rs.getInt("student_id") );
+                student.setFirstName( rs.getString("first_name") );
+                student.setLastName( rs.getString("last_name") );
                 student.setDepartment( rs.getString("department") );
 
-                String clearCourseText = rs.getString("clearCourseText");
-                String[] clearCourseSplit = clearCourseText.split("/");
+                String clearCourseText = rs.getString("clear_course");
+                String[] clearCourseSplit = clearCourseText.split(" ");
                 Vector<Integer> clearCourseList = new Vector<Integer>();
                 for( String courseID : clearCourseSplit){
                     clearCourseList.add( Integer.parseInt( courseID ) );
                 }
                 student.setClearCourses( clearCourseList );
                 students.add( student );
+                if( !rs.next() ) break;
             }
-            return students;
         } catch( Exception e ){
-            System.out.println( "문제가 발생했습니다." );
+            System.out.println( "Code 702: 문제가 발생했습니다." );
         }
-        return null;
+        return students;
     }
 
 }

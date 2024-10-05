@@ -94,8 +94,8 @@ public class GRPCClient {
 
             while (true) {
                 System.out.println("Select Operation.");
-                System.out.println("1. Save Name");
-                System.out.println("2. Load Name");
+                System.out.println("1. Load Students");
+                System.out.println("2. Load Courses");
                 System.out.println("0. Exit");
 
                 int flag;
@@ -108,6 +108,7 @@ public class GRPCClient {
                 switch (flag) {
                     case 1:
                         client.loadStudent();
+                        break;
                     case 2:
                         client.loadCourse();
                         break;

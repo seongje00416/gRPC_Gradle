@@ -21,19 +21,19 @@ public class DatabaseConnection {
             Class.forName( this.JDBC_DRIVER );
             this.conn = DriverManager.getConnection( this.DB_URL, this.USER, this.PASS );
         } catch( Exception e ) {
-            System.out.println( "문제가 발생했습니다." );
+            e.printStackTrace();
         }
     }
 
     public ResultSet getResult(String sql) {
         try{
             this.stmt = this.conn.createStatement();
-            ResultSet rs = this.stmt.executeQuery(sql);
-
-            return rs;
+            ResultSet tmp = this.stmt.executeQuery(sql);
+            System.out.println( "Result: " + tmp.next() );
+            return tmp;
         }
         catch ( Exception e ) {
-            System.out.println( "문제가 발생했습니다." );
+            System.out.println( "Code 701: 문제가 발생했습니다." );
         }
         return null;
     }
