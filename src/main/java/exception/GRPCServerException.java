@@ -32,8 +32,6 @@ public class GRPCServerException extends RuntimeException {
         System.out.println( errorType.getDescription() );
     }
 
-    public ErrorType getErrorType() {
-        return errorType;
-    }
+    public ErrorType getErrorType() {return errorType;}
 
 }

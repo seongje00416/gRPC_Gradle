@@ -20,9 +20,7 @@ public class DatabaseConnection {
         try{
             Class.forName( this.JDBC_DRIVER );
             this.conn = DriverManager.getConnection( this.DB_URL, this.USER, this.PASS );
-        } catch( Exception e ) {
-            e.printStackTrace();
-        }
+        } catch( Exception e ) {e.printStackTrace();}
     }
 
     public ResultSet getResult(String sql) {
@@ -32,9 +30,7 @@ public class DatabaseConnection {
             System.out.println( "Result: " + tmp.next() );
             return tmp;
         }
-        catch ( Exception e ) {
-            System.out.println( "Code 701: 문제가 발생했습니다." );
-        }
+        catch ( Exception e ) {System.out.println( "Code 701: 문제가 발생했습니다." );}
         return null;
     }
 
@@ -42,8 +38,6 @@ public class DatabaseConnection {
         try{
             this.stmt.close();
             this.conn.close();
-        } catch( Exception e ) {
-            System.out.println( "문제가 발생했습니다." );
-        }
+        } catch( Exception e ) {System.out.println( "문제가 발생했습니다." );}
     }
 }

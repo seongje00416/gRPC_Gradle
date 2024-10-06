@@ -14,9 +14,7 @@ public class LoadCourseServiceImpl extends LoadCourseServiceGrpc.LoadCourseServi
     public void loadCourse(LoadCourseMessage.LoadCourseRequest request, StreamObserver<LoadCourseMessage.LoadCourseResponse> responseObserver) {
         Vector<LoadCourseMessage.Course> courses = fetchCourseList();
         LoadCourseMessage.LoadCourseResponse.Builder response = LoadCourseMessage.LoadCourseResponse.newBuilder();
-        for( LoadCourseMessage.Course course : courses ) {
-            response.addCourses( course );
-        }
+        for( LoadCourseMessage.Course course : courses ) {response.addCourses( course );}
         LoadCourseMessage.LoadCourseResponse responseBuild = response.build();
         responseObserver.onNext( responseBuild );
         responseObserver.onCompleted();
@@ -30,9 +28,7 @@ public class LoadCourseServiceImpl extends LoadCourseServiceGrpc.LoadCourseServi
                     .setCourseID( course.getCourseID() )
                     .setProfessor( course.getProfessor() )
                     .setCourseName( course.getCourseName() );
-            for( Integer prerequisiteCourse : course.getPrerequisiteCourses() ){
-                temp.addPrerequisiteCourse( prerequisiteCourse );
-            }
+            for( Integer prerequisiteCourse : course.getPrerequisiteCourses() ){temp.addPrerequisiteCourse( prerequisiteCourse );}
             courses.add( temp.build() );
         }
         return courses;

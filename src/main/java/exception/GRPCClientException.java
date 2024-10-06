@@ -14,10 +14,7 @@ public class GRPCClientException extends RuntimeException {
         ErrorType(String description) {
             this.description = description;
         }
-
-        public String getDescription() {
-            return description;
-        }
+        public String getDescription() {return description;}
     }
 
     private final ErrorType errorType;
@@ -32,7 +29,5 @@ public class GRPCClientException extends RuntimeException {
         this.errorType = errorType;
     }
 
-    public ErrorType getErrorType() {
-        return errorType;
-    }
+    public ErrorType getErrorType() {return errorType;}
 }

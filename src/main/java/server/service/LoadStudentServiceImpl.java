@@ -14,9 +14,7 @@ public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentSe
     public void loadStudent( LoadStudentMessage.LoadStudentRequest request, StreamObserver<LoadStudentMessage.LoadStudentResponse> responseObserver) {
         Vector< LoadStudentMessage.Student > students = fetchStudentList();
         LoadStudentMessage.LoadStudentResponse.Builder response = LoadStudentMessage.LoadStudentResponse.newBuilder();
-        for( LoadStudentMessage.Student student : students ) {
-            response.addStudents(student);
-        }
+        for( LoadStudentMessage.Student student : students ) {response.addStudents(student);}
         LoadStudentMessage.LoadStudentResponse responseBuild = response.build();
         responseObserver.onNext(responseBuild);
         responseObserver.onCompleted();
@@ -31,9 +29,7 @@ public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentSe
                     .setLastName( student.getLastName() )
                     .setFirstName( student.getFirstName() )
                     .setDepartment( student.getDepartment() );
-            for( Integer clearCourse : student.getClearCourses() ){
-                temp.addClearCourse( clearCourse );
-            }
+            for( Integer clearCourse : student.getClearCourses() ){temp.addClearCourse( clearCourse );}
             students.add( temp.build() );
         }
         return students;

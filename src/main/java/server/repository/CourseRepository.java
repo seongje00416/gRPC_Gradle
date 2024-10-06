@@ -24,9 +24,7 @@ public class CourseRepository {
                 String prerequisiteCoursesText = rs.getString("prerequisite_courses");
                 String[] prerequisiteCoursesSplit = prerequisiteCoursesText.split(" ");
                 Vector<Integer> prerequisiteCourseList = new Vector<Integer>();
-                for (String prerequisiteCourse : prerequisiteCoursesSplit) {
-                    prerequisiteCourseList.add(Integer.parseInt(prerequisiteCourse));
-                }
+                for (String prerequisiteCourse : prerequisiteCoursesSplit) {prerequisiteCourseList.add(Integer.parseInt(prerequisiteCourse));}
                 course.setPrerequisiteCourses(prerequisiteCourseList);
                 courses.add(course);
 
