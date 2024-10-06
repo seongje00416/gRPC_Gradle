@@ -3,11 +3,11 @@ package exception;
 public class GRPCClientException extends RuntimeException {
 
     public enum ErrorType {
-        CONNECTION_ERROR("연결 오류"),
-        RPC_ERROR("RPC 호출 오류"),
-        INPUT_ERROR("입력 오류"),
-        SHUTDOWN_ERROR("종료 오류"),
-        UNKNOWN_ERROR("알 수 없는 오류");
+        CONNECTION_ERROR("Connection Error"),
+        RPC_ERROR("RPC Call Error"),
+        INPUT_ERROR("Input Error"),
+        SHUTDOWN_ERROR("Terminate Error"),
+        UNKNOWN_ERROR("Unknown Error");
 
         private final String description;
 
