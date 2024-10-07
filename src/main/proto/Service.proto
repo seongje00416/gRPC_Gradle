@@ -3,50 +3,66 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "com.example.grpc";
 
-service SaveService {
-  rpc SaveName( SaveMessage.SaveRequest ) returns ( SaveMessage.SaveResponse ) {}
-}
-
-service ReadService {
-  rpc ReadName( ReadMessage.ReadRequest ) returns ( ReadMessage.ReadResponse ) {}
-}
-
 service LoadStudentService {
   rpc LoadStudent( LoadStudentMessage.LoadStudentRequest ) returns ( LoadStudentMessage.LoadStudentResponse ){}
 }
-
 service LoadCourseService {
   rpc LoadCourse( LoadCourseMessage.LoadCourseRequest ) returns ( LoadCourseMessage.LoadCourseResponse ){}
 }
-
-message SaveMessage {
-  message SaveRequest {
-    int32 nameID = 1;
-    string name = 2;
+service LogInService {
+  rpc logIn( LogInMessage.LogInRequest ) returns ( LogInMessage.LogInResponse ){}
+}
+service SignInService {
+  rpc signIn( SignInMessage.SignInRequest ) returns ( SignInMessage.SignInResponse ){}
+}
+service SetLoggingService {
+  rpc SetLogging( LoggingMessage.SetLoggingRequest ) returns ( LoggingMessage.SetLoggingResponse ){}
+}
+service GetLoggingService {
+  rpc GetLogging( LoggingMessage.GetLoggingRequest ) returns ( LoggingMessage.GetLoggingResponse ){}
+}
+message LogInMessage {
+  message LogInRequest {
+    string userID = 1;
+    string password = 2;
   }
-
-  message SaveResponse {
-    int32 nameID = 1;
-    string name = 2;
+  message LogInResponse {
+    string studentID = 1;
   }
 }
-
-message ReadMessage {
-  message ReadRequest {
-    int32 nameID = 1;
+message SignInMessage {
+  message SignInRequest {
+    string userID = 1;
+    string password = 2;
+    LoadStudentMessage.Student student = 3;
   }
-
-  message ReadResponse {
-    string name = 1;
-    int32 nameID = 2;
+  message SignInResponse {
+    int32 studentID = 1;
+    bool isSuccess = 2;
   }
 }
-
+message LoggingMessage {
+  message SetLoggingRequest {
+    string log = 1;
+  }
+  message SetLoggingResponse {
+    int32 loggingID = 1;
+    bool result = 2;
+  }
+  message GetLoggingRequest {
+    int32 loggingID = 1;
+  }
+  message GetLoggingResponse {
+    string log = 1;
+  }
+}
 message LoadStudentMessage {
   message LoadStudentRequest {
     int32 studentID = 1;
   }
-
+  message LoadStudentResponse {
+    repeated Student students = 1;
+  }
   message Student {
     int32 studentID = 1;
     string lastName = 2;
@@ -54,25 +70,18 @@ message LoadStudentMessage {
     string department = 4;
     repeated int32 clearCourse = 5;
   }
-
-  message LoadStudentResponse {
-    repeated Student students = 1;
-  }
 }
-
 message LoadCourseMessage {
   message LoadCourseRequest {
     int32 courseID = 1;
   }
-
+  message LoadCourseResponse {
+    repeated Course courses = 1;
+  }
   message Course {
     int32 courseID = 1;
     string professor = 2;
     string courseName = 3;
     repeated int32  prerequisiteCourse = 4;
-  }
-
-  message LoadCourseResponse {
-    repeated Course courses = 1;
   }
 }

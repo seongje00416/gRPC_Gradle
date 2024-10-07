@@ -5,11 +5,9 @@ import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import server.entity.Student;
 
 import java.util.Scanner;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+
 
 public class GRPCClient {
 
