@@ -8,13 +8,22 @@ import java.sql.SQLException;
 
 public class UserRepository {
 
-    public void signInStudent( Student student ) {
+    public int signInStudent( Student student ) {
         DatabaseConnection conn = new DatabaseConnection();
+        String courseText = "";
+        for( int course : student.getClearCourses() ){
+            courseText = course + " ";
+        }
         String query =
                 "INSERT INTO students (" +
-                        "" +
-                        "VALUES ";
-        ResultSet rs = conn.getResult( query );
+                        "student_id, first_name, last_name, department, courses" +
+                        ") VALUES (" +
+                        student.getStudentID() + "," +
+                        student.getFirstName() + "," +
+                        student.getLastName() + ", " +
+                        student.getDepartment() + ", " +
+                        courseText + ");";
+        return conn.isSuccess( query );
     }
     public int logInStudent( String id, String password ){
         DatabaseConnection conn = new DatabaseConnection();

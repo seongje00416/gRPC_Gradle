@@ -53,23 +53,29 @@ message SignInMessage {
     bool isSuccess = 2;
   }
 }
-message LoggingMessage {
-  message SetLoggingRequest {
+message LogMessage {
+  message GetLogByIDRequest {
     int32 userID = 1;
-    string command = 2;
-    string timestamp = 3;
+    int32 logID = 2;
   }
-  message SetLoggingResponse {
-    int32 loggingID = 1;
-    bool result = 2;
-  }
-  message GetLoggingRequest {
-    int32 loggingID = 1;
-  }
-  message GetLoggingResponse {
+  message GetAllLogRequest {
     int32 userID = 1;
-    string command = 2;
-    string timestamp = 3;
+  }
+  message AddLogRequest {
+    int32 userID = 1;
+    Log log = 2;
+  }
+  message GetAllLogResponse {
+    repeated Log logs = 1;
+  }
+  message AddLogResponse {
+    int32 logID = 1;
+  }
+  message Log {
+    int32 logID = 1;
+    string timestamp = 2;
+    string command = 3;
+    int32 userID = 4;
   }
 }
 
@@ -85,9 +91,12 @@ service LogInService {
 service SignInService {
   rpc signIn( SignInMessage.SignInRequest ) returns ( SignInMessage.SignInResponse ){}
 }
-service SetLoggingService {
-  rpc SetLogging( LoggingMessage.SetLoggingRequest ) returns ( LoggingMessage.SetLoggingResponse ){}
+service GetLogByIdService {
+  rpc getLogById( LogMessage.GetLogByIDRequest ) returns ( LogMessage.Log ){}
 }
-service GetLoggingService {
-  rpc GetLogging( LoggingMessage.GetLoggingRequest ) returns ( LoggingMessage.GetLoggingResponse ){}
+service GetAllLogService {
+  rpc getAllLog( LogMessage.GetAllLogRequest ) returns ( LogMessage.GetAllLogResponse ){}
+}
+service AddLogService {
+  rpc addLog( LogMessage.AddLogRequest ) returns ( LogMessage.AddLogResponse ){}
 }
