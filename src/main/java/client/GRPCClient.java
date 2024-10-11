@@ -5,6 +5,7 @@ import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
+import server.common.TUIView;
 
 import java.util.Scanner;
 
@@ -36,12 +37,13 @@ public class GRPCClient {
     }
 
     public void loadStudent() throws GRPCClientException {
+        TUIView view = new TUIView();
         try{
-            LoadStudentMessage.LoadStudentRequest loadStudentRequest = LoadStudentMessage.LoadStudentRequest.newBuilder()
+            StudentMessage.LoadStudentRequest loadStudentRequest = StudentMessage.LoadStudentRequest.newBuilder()
                     .build();
-            LoadStudentMessage.LoadStudentResponse loadStudentResponse = loadStudentStub.loadStudent(loadStudentRequest);
-            System.out.println( "===================== Student List =====================");
-            for(LoadStudentMessage.Student student : loadStudentResponse.getStudentsList() ){
+            StudentMessage.LoadStudentResponse loadStudentResponse = loadStudentStub.loadStudent(loadStudentRequest);
+            view.listViewStart();
+            for(StudentMessage.Student student : loadStudentResponse.getStudentsList() ){
                 System.out.println( "-----------------------------------------------------------" );
                 System.out.println( "Student Number: " + student.getStudentID() );
                 System.out.println( "Student Name: " + student.getLastName() + " " + student.getFirstName() );
@@ -53,19 +55,20 @@ public class GRPCClient {
                 System.out.print('\n');
                 System.out.println( "-----------------------------------------------------------" );
             }
-            System.out.println("=========================================================");
+            view.listViewEnd();
         } catch ( StatusRuntimeException e) {
             throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);
         }
     }
 
     public void loadCourse() throws GRPCClientException {
+        TUIView view = new TUIView();
         try{
-            LoadCourseMessage.LoadCourseRequest loadCourseRequest = LoadCourseMessage.LoadCourseRequest.newBuilder()
+            CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder()
                     .build();
-            LoadCourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse(loadCourseRequest);
-            System.out.println( "===================== Course List =====================");
-            for(LoadCourseMessage.Course course : loadCourseResponse.getCoursesList() ){
+            CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse(loadCourseRequest);
+            view.listViewStart();
+            for(CourseMessage.Course course : loadCourseResponse.getCoursesList() ){
                 System.out.println( "-----------------------------------------------------------" );
                 System.out.println( "Course Number: " + course.getCourseID() );
                 System.out.println( "Course Name: " + course.getCourseName() );
@@ -77,7 +80,7 @@ public class GRPCClient {
                 System.out.print('\n');
                 System.out.println( "-----------------------------------------------------------" );
             }
-            System.out.println("=========================================================");
+            view.listViewEnd();
         } catch( StatusRuntimeException e) {
             throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load course", e);
         }
@@ -86,15 +89,13 @@ public class GRPCClient {
     public static void main(String[] args) {
         GRPCClient client = null;
         Scanner sc = new Scanner(System.in);
+        TUIView view = new TUIView();
 
         try {
             client = new GRPCClient("localhost", 8080);
 
             while (true) {
-                System.out.println("Select Operation.");
-                System.out.println("1. Load Students");
-                System.out.println("2. Load Courses");
-                System.out.println("0. Exit");
+                view.mainView();
 
                 int flag;
                 try {

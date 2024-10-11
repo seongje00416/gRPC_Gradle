@@ -6,6 +6,7 @@ import server.service.LoadCourseServiceImpl;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import server.service.LoginServiceImpl;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -17,6 +18,7 @@ public class GRPCServer {
             server = ServerBuilder.forPort( 8080 )
                     .addService( new LoadStudentServiceImpl() )
                     .addService( new LoadCourseServiceImpl() )
+                    .addService( new LoginServiceImpl() )
                     .build()
                     .start();
             server.awaitTermination();

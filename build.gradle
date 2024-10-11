@@ -53,6 +53,9 @@ sourceSets {
 tasks.withType(Copy).all {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
