@@ -15,14 +15,6 @@ public class AddLogServiceImpl extends AddLogServiceGrpc.AddLogServiceImplBase {
     public void addLog( LogMessage.AddLogRequest request, StreamObserver<LogMessage.AddLogResponse> responseObserver ){
         LogRepository repository = new LogRepository();
         Log log = new Log();
-        log.setLogID( request.getLog().getLogID() );
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss" );
-        try{
-            Date timestamp = formatter.parse( request.getLog().getTimestamp() );
-            log.setTimestamp( timestamp );
-        } catch( ParseException e ){
-            System.out.println( "시간 형식이 잘못되었습니다" );
-        }
         log.setUserID( request.getLog().getUserID() );
         log.setCommand( request.getLog().getCommand() );
 

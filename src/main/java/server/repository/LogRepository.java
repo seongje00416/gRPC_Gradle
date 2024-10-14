@@ -36,11 +36,9 @@ public class LogRepository {
                 Log log = new Log();
                 log.setLogID( rs.getInt( "log_id" ) );
                 log.setCommand( rs.getString( "command" ) );
-                log.setTimestamp( rs.getTimestamp( "log_id" ) );
+                log.setTimestamp( rs.getTimestamp( "timestamp" ) );
                 log.setUserID( rs.getInt( "user_id" ) );
-
                 logs.add( log );
-
                 if( !rs.next() ) break;
             }
         } catch( SQLException e ){
@@ -51,9 +49,9 @@ public class LogRepository {
 
     public int addLog( Log log ){
         DatabaseConnection conn = new DatabaseConnection();
-        String query = "INSERT INTO logs ( log_id, timestamp, command, user_id ) VALUES {" +
-                + log.getLogID() + ", " + log.getTimestamp() + ", " + log.getCommand() + ", " + log.getUserID() +
-                ")";
+        String query = "INSERT INTO logs ( command, user_id ) VALUES ("
+                + "'" + log.getCommand() + "', " + log.getUserID() +
+                ");";
         int result = conn.isSuccess( query );
         if( result != -1 ) return log.getLogID();
         else return -1;

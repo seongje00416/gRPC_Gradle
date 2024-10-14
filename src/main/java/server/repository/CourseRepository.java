@@ -21,17 +21,21 @@ public class CourseRepository {
                 course.setProfessor(rs.getString("professor"));
                 course.setCourseName(rs.getString("course_name"));
 
-                String prerequisiteCoursesText = rs.getString("prerequisite_courses");
+                String prerequisiteCoursesText = rs.getString("pre_courses");
                 String[] prerequisiteCoursesSplit = prerequisiteCoursesText.split(" ");
                 Vector<Integer> prerequisiteCourseList = new Vector<Integer>();
-                for (String prerequisiteCourse : prerequisiteCoursesSplit) {prerequisiteCourseList.add(Integer.parseInt(prerequisiteCourse));}
+
+                for (String prerequisiteCourse : prerequisiteCoursesSplit) {
+                    if( !prerequisiteCourse.equals("")) prerequisiteCourseList.add(Integer.parseInt(prerequisiteCourse));
+                }
                 course.setPrerequisiteCourses(prerequisiteCourseList);
                 courses.add(course);
 
                 if( !rs.next() ) break;
             }
         } catch (Exception e) {
-            System.out.println("문제가 발생했습니다.");
+            e.printStackTrace();
+            //System.out.println("Course Repository Error");
         }
         return courses;
     }

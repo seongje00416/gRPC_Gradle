@@ -22,7 +22,7 @@ public class StudentRepository {
                 student.setLastName( rs.getString("last_name") );
                 student.setDepartment( rs.getString("department") );
 
-                String clearCourseText = rs.getString("clear_course");
+                String clearCourseText = rs.getString("courses");
                 String[] clearCourseSplit = clearCourseText.split(" ");
                 Vector<Integer> clearCourseList = new Vector<Integer>();
                 for( String courseID : clearCourseSplit){clearCourseList.add( Integer.parseInt( courseID ) );}
@@ -30,7 +30,9 @@ public class StudentRepository {
                 students.add( student );
                 if( !rs.next() ) break;
             }
-        } catch( Exception e ){System.out.println( "Code 702: 문제가 발생했습니다." );}
+        } catch( Exception e ){
+            System.out.println( "Code 703: 문제가 발생했습니다." );
+        }
         return students;
     }
 

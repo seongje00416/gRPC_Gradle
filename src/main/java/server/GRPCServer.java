@@ -1,15 +1,15 @@
 package server;
 
 import exception.GRPCServerException;
-import server.service.LoadStudentServiceImpl;
-import server.service.LoadCourseServiceImpl;
+import io.grpc.ServerServiceDefinition;
+import server.service.*;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import server.service.LoginServiceImpl;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.util.Vector;
 
 public class GRPCServer {
     public static void main( String[] args ) {
@@ -19,6 +19,8 @@ public class GRPCServer {
                     .addService( new LoadStudentServiceImpl() )
                     .addService( new LoadCourseServiceImpl() )
                     .addService( new LoginServiceImpl() )
+                    .addService( new AddLogServiceImpl() )
+                    .addService( new GetAllLogServiceImpl() )
                     .build()
                     .start();
             server.awaitTermination();

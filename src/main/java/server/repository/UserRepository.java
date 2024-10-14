@@ -27,14 +27,13 @@ public class UserRepository {
     }
     public int logInStudent( String id, String password ){
         DatabaseConnection conn = new DatabaseConnection();
-        String query = "SELECT * FROM students WHERE student_id='" + id + "' AND password='" + password + "';";
+        String query = "SELECT * FROM users WHERE id='" + id + "' AND password='" + password + "';";
         ResultSet rs = conn.getResult( query );
-
         try {
-            if( rs.next() ) return rs.getInt( "student_id" );
+            if( rs != null ) return rs.getInt( "students_id" );
             else return 0;
         } catch ( SQLException e ){
-            System.out.println( "회원 정보가 없습니다." );
+            System.out.println( "No Result" );
         }
         return 0;
     }
