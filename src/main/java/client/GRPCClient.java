@@ -14,7 +14,7 @@ public class GRPCClient {
 
     private final ManagedChannel channel;
     private int studentIDToken;
-    private TUIView view;
+    private final TUIView view;
 
     public GRPCClient(String host, int port) {
         this.view = new TUIView();
@@ -108,7 +108,7 @@ public class GRPCClient {
                     .setLog( newLog )
                     .build();
             LogMessage.AddLogResponse addLogResponse = addLogStub.addLog( addLogRequest );
-            if( addLogResponse.getLogID() == 0 ) System.out.println( "Add Log Failed" );
+            if( addLogResponse.getLogID() == 0 && !command.equals("login") ) System.out.println( "Add Log Failed" );
         } catch( Exception e ){
             System.out.println( "Add Log Failed: Error" );
         }

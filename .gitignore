@@ -43,3 +43,4 @@ bin/
 
 ### Desktop Setting ###
 resources
+DatabaseConstants.java
