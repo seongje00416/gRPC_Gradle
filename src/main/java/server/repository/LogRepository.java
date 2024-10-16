@@ -13,16 +13,13 @@ public class LogRepository {
         DatabaseConnection conn = new DatabaseConnection();
         String query = "SELECT * FROM logs WHERE log_id=" + logID + ";";
         ResultSet rs = conn.getResult(query);
-
         Log log = new Log();
         try {
             log.setLogID(rs.getInt("log_id"));
             log.setUserID(rs.getInt("user_id"));
             log.setCommand(rs.getString("command"));
             log.setTimestamp(rs.getTimestamp("timestamp"));
-        } catch (SQLException e) {
-            log.setLogID(-1);
-        }
+        } catch (SQLException e) {log.setLogID(-1);}
         return log;
     }
 
@@ -41,9 +38,7 @@ public class LogRepository {
                 logs.add( log );
                 if( !rs.next() ) break;
             }
-        } catch( SQLException e ){
-            System.out.println( "로그 조회에 실패했습니다" );
-        }
+        } catch( SQLException e ){System.out.println( "로그 조회에 실패했습니다" );}
         return logs;
     }
 

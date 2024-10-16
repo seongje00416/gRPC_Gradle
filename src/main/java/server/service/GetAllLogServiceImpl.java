@@ -1,5 +1,4 @@
 package server.service;
-
 import com.example.grpc.GetAllLogServiceGrpc;
 import com.example.grpc.LogMessage;
 import io.grpc.stub.StreamObserver;
@@ -18,7 +17,6 @@ public class GetAllLogServiceImpl extends GetAllLogServiceGrpc.GetAllLogServiceI
         responseObserver.onNext( responseBuild );
         responseObserver.onCompleted();
     }
-
     public Vector<LogMessage.Log> fetchGetAllLog(){
         LogRepository repository = new LogRepository();
         Vector<LogMessage.Log> logs = new Vector<LogMessage.Log>();

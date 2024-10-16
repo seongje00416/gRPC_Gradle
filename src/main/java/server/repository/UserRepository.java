@@ -11,9 +11,7 @@ public class UserRepository {
     public int signInStudent( Student student ) {
         DatabaseConnection conn = new DatabaseConnection();
         String courseText = "";
-        for( int course : student.getClearCourses() ){
-            courseText = course + " ";
-        }
+        for( int course : student.getClearCourses() ){courseText = course + " ";}
         String query =
                 "INSERT INTO students (" +
                         "student_id, first_name, last_name, department, courses" +
@@ -32,9 +30,7 @@ public class UserRepository {
         try {
             if( rs != null ) return rs.getInt( "students_id" );
             else return 0;
-        } catch ( SQLException e ){
-            System.out.println( "No Result" );
-        }
+        } catch ( SQLException e ){System.out.println( "No Result" );}
         return 0;
     }
 }

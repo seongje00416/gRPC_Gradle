@@ -1,7 +1,5 @@
 package server.util;
-
 import server.common.DatabaseConstants;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -12,17 +10,14 @@ public class DatabaseConnection {
     private final String DB_URL = DatabaseConstants.DATABASE_URL;
     private final String USER = DatabaseConstants.DATABASE_USER;
     private final String PASS = DatabaseConstants.DATABASE_PASSWORD;
-
     private Connection conn = null;
     private Statement stmt = null;
-
     public DatabaseConnection() {
         try{
             Class.forName( this.JDBC_DRIVER );
             this.conn = DriverManager.getConnection( this.DB_URL, this.USER, this.PASS );
         } catch( Exception e ) {e.printStackTrace();}
     }
-
     public ResultSet getResult(String sql) {
         try{
             this.stmt = this.conn.createStatement();
@@ -33,7 +28,6 @@ public class DatabaseConnection {
         catch ( Exception e ) {System.out.println( "Code 701: 문제가 발생했습니다." );}
         return null;
     }
-
     public int isSuccess( String sql ){
         try{
             this.stmt = this.conn.createStatement();
@@ -44,7 +38,6 @@ public class DatabaseConnection {
             return -1;
         }
     }
-
     public void close(){
         try{
             this.stmt.close();

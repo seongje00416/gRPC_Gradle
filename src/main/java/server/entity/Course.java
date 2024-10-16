@@ -1,5 +1,4 @@
 package server.entity;
-
 import java.util.Vector;
 
 public class Course {
@@ -7,7 +6,6 @@ public class Course {
     private String professor;
     private String courseName;
     private Vector<Integer> prerequisiteCourses;
-
     public void setCourseID(int courseID) {this.courseID = courseID;}
     public int getCourseID() {return this.courseID;}
     public void setProfessor(String professor) {this.professor = professor;}

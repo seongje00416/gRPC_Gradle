@@ -1,5 +1,4 @@
 package server.entity;
-
 import java.util.Date;
 
 public class Log {
@@ -7,8 +6,6 @@ public class Log {
     private Date timestamp;
     private String command;
     private int userID;
-
-
     public void setLogID( int loggingID ){
         this.logID = loggingID;
     }

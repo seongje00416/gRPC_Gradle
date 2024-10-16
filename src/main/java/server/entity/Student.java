@@ -1,5 +1,4 @@
 package server.entity;
-
 import java.util.Vector;
 
 public class Student {
@@ -8,7 +7,6 @@ public class Student {
     private String firstName;
     private String department;
     private Vector<Integer> clearCourses;
-
     public void setStudentID(int studentID) {
         this.studentID = studentID;
     }

@@ -2,17 +2,14 @@ package server.repository;
 
 import server.entity.Student;
 import server.util.DatabaseConnection;
-
 import java.sql.ResultSet;
 import java.util.Vector;
 
 public class StudentRepository {
-
     public Vector<Student> getAllStudent(){
         DatabaseConnection conn = new DatabaseConnection();
         String query = "SELECT * FROM students";
         ResultSet rs = conn.getResult(query);
-
         Vector<Student> students = new Vector<Student>();
         try{
             while( true ){
@@ -21,7 +18,6 @@ public class StudentRepository {
                 student.setFirstName( rs.getString("first_name") );
                 student.setLastName( rs.getString("last_name") );
                 student.setDepartment( rs.getString("department") );
-
                 String clearCourseText = rs.getString("courses");
                 String[] clearCourseSplit = clearCourseText.split(" ");
                 Vector<Integer> clearCourseList = new Vector<Integer>();
@@ -30,9 +26,7 @@ public class StudentRepository {
                 students.add( student );
                 if( !rs.next() ) break;
             }
-        } catch( Exception e ){
-            System.out.println( "Code 703: 문제가 발생했습니다." );
-        }
+        } catch( Exception e ){System.out.println( "Code 703: 문제가 발생했습니다." );}
         return students;
     }
 

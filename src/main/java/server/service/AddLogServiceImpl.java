@@ -1,5 +1,4 @@
 package server.service;
-
 import com.example.grpc.AddLogServiceGrpc;
 import com.example.grpc.LogMessage;
 import io.grpc.stub.StreamObserver;
@@ -17,14 +16,10 @@ public class AddLogServiceImpl extends AddLogServiceGrpc.AddLogServiceImplBase {
         Log log = new Log();
         log.setUserID( request.getLog().getUserID() );
         log.setCommand( request.getLog().getCommand() );
-
         int result = repository.addLog( log );
         LogMessage.AddLogResponse.Builder response = LogMessage.AddLogResponse.newBuilder();
-        if( result != -1 ){
-            response.setLogID( log.getLogID() );
-        } else {
-            response.setLogID( -1 );
-        }
+        if( result != -1 ){response.setLogID( log.getLogID() );}
+        else {response.setLogID( -1 );}
         LogMessage.AddLogResponse responseBuild = response.build();
         responseObserver.onNext( responseBuild );
         responseObserver.onCompleted();

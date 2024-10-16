@@ -1,5 +1,4 @@
 package server.service;
-
 import com.example.grpc.GetLogByIdServiceGrpc;
 import com.example.grpc.LogMessage;
 import io.grpc.stub.StreamObserver;

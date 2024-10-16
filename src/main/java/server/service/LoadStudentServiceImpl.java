@@ -1,16 +1,12 @@
 package server.service;
-
 import com.example.grpc.LoadStudentServiceGrpc;
-import com.example.grpc.StudentMessage;
 import com.example.grpc.StudentMessage;
 import io.grpc.stub.StreamObserver;
 import server.entity.Student;
 import server.repository.StudentRepository;
-
 import java.util.Vector;
 
 public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentServiceImplBase {
-
     @Override
     public void loadStudent(StudentMessage.LoadStudentRequest request, StreamObserver<StudentMessage.LoadStudentResponse> responseObserver) {
         Vector< StudentMessage.Student > students = fetchStudentList();
@@ -20,7 +16,6 @@ public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentSe
         responseObserver.onNext(responseBuild);
         responseObserver.onCompleted();
     }
-
     public Vector<StudentMessage.Student> fetchStudentList() {
         StudentRepository repository = new StudentRepository();
         Vector<StudentMessage.Student> students = new Vector<StudentMessage.Student>();
@@ -35,6 +30,4 @@ public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentSe
         }
         return students;
     }
-
-
 }

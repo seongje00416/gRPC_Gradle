@@ -1,13 +1,10 @@
 package server.service;
-
-import com.example.grpc.CourseMessage;
 import com.example.grpc.LogInMessage;
 import com.example.grpc.LogInServiceGrpc;
 import io.grpc.stub.StreamObserver;
 import server.repository.UserRepository;
 
 public class LoginServiceImpl extends LogInServiceGrpc.LogInServiceImplBase {
-
     @Override
     public void logIn(LogInMessage.LogInRequest request, StreamObserver<LogInMessage.LogInResponse> responseObserver ){
         UserRepository repository = new UserRepository();
