@@ -43,4 +43,4 @@ bin/
 
 ### Desktop Setting ###
 resources
-DatabaseConstants.java
+src/main/java/server/common/DatabaseConstants.java
