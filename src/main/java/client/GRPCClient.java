@@ -13,25 +13,20 @@ public class GRPCClient {
     private final TUIView view;
     public GRPCClient(String host, int port) {
         this.view = new TUIView();
-        try {
-            this.channel = ManagedChannelBuilder.forAddress(host, port)
-                    .usePlaintext()
-                    .build();
-        } catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
+        try { this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build(); }
+        catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
     }
     public void setToken( int id ) {this.studentIDToken = id;}
     public int getToken() { return this.studentIDToken; }
     public void shutdown() throws GRPCClientException {
-        try {
-            channel.shutdownNow();
-        } catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.SHUTDOWN_ERROR, "Error shutting down client", e);}
+        try { channel.shutdownNow(); }
+        catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.SHUTDOWN_ERROR, "Error shutting down client", e);}
     }
     public void loadStudent() throws GRPCClientException {
         addLog( "load Students" );
         LoadStudentServiceGrpc.LoadStudentServiceBlockingStub loadStudentStub = LoadStudentServiceGrpc.newBlockingStub(this.channel);
         try{
-            StudentMessage.LoadStudentRequest loadStudentRequest = StudentMessage.LoadStudentRequest.newBuilder()
-                    .build();
+            StudentMessage.LoadStudentRequest loadStudentRequest = StudentMessage.LoadStudentRequest.newBuilder().build();
             StudentMessage.LoadStudentResponse loadStudentResponse = loadStudentStub.loadStudent(loadStudentRequest);
             this.view.listViewStart();
             for(StudentMessage.Student student : loadStudentResponse.getStudentsList() ){
@@ -40,9 +35,7 @@ public class GRPCClient {
                 System.out.println( "Student Name: " + student.getLastName() + " " + student.getFirstName() );
                 System.out.println( "Student Department: " + student.getDepartment() );
                 System.out.print( "Success Register Course: ");
-                for( Integer courseNumber : student.getClearCourseList() ){
-                    System.out.print( courseNumber + " " );
-                }
+                for( Integer courseNumber : student.getClearCourseList() ) System.out.print( courseNumber + " " );
                 System.out.print('\n');
                 this.view.lineView();
             }
@@ -53,8 +46,7 @@ public class GRPCClient {
         addLog( "load Courses" );
         LoadCourseServiceGrpc.LoadCourseServiceBlockingStub loadCourseStub = LoadCourseServiceGrpc.newBlockingStub(this.channel);
         try{
-            CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder()
-                    .build();
+            CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder().build();
             CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse(loadCourseRequest);
             this.view.listViewStart();
             for(CourseMessage.Course course : loadCourseResponse.getCoursesList() ){
@@ -63,7 +55,7 @@ public class GRPCClient {
                 System.out.println( "Course Name: " + course.getCourseName() );
                 System.out.println( "Professor: " + course.getProfessor() );
                 System.out.print( "Pre Requisite Courses: ");
-                for( Integer courseNumber : course.getPrerequisiteCourseList() ){System.out.print( courseNumber + " " );}
+                for( Integer courseNumber : course.getPrerequisiteCourseList() ) System.out.print( courseNumber + " " );
                 System.out.print('\n');
                 this.view.lineView();
             }
@@ -81,15 +73,9 @@ public class GRPCClient {
     }
     public void addLog( String command ) {
         AddLogServiceGrpc.AddLogServiceBlockingStub addLogStub = AddLogServiceGrpc.newBlockingStub( this.channel );
-        LogMessage.Log newLog = LogMessage.Log.newBuilder()
-                .setCommand( command )
-                .setUserID( studentIDToken )
-                .build();
+        LogMessage.Log newLog = LogMessage.Log.newBuilder().setCommand( command ).setUserID( studentIDToken ).build();
         try{
-            LogMessage.AddLogRequest addLogRequest = LogMessage.AddLogRequest.newBuilder()
-                    .setUserID(studentIDToken)
-                    .setLog( newLog )
-                    .build();
+            LogMessage.AddLogRequest addLogRequest = LogMessage.AddLogRequest.newBuilder().setUserID(studentIDToken).setLog( newLog ).build();
             LogMessage.AddLogResponse addLogResponse = addLogStub.addLog( addLogRequest );
             if( addLogResponse.getLogID() == 0 && !command.equals("login") ) System.out.println( "Add Log Failed" );
         } catch( Exception e ){System.out.println( "Add Log Failed: Error" );}
@@ -102,9 +88,7 @@ public class GRPCClient {
             LogMessage.GetAllLogResponse getAllLogResponse = getAllLogStub.getAllLog( getAllLogRequest );
             this.view.listViewStart();
             System.out.println( "|          Time        |    User    |    Command    |" );
-            for( LogMessage.Log log : getAllLogResponse.getLogsList() ){
-                System.out.println( " " + log.getTimestamp() + "    " + log.getUserID() + "    " + log.getCommand() );
-            }
+            for( LogMessage.Log log : getAllLogResponse.getLogsList() ) System.out.println( " " + log.getTimestamp() + "    " + log.getUserID() + "    " + log.getCommand() );
             this.view.listViewEnd();
         } catch( Exception e ){throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load Logs", e);}
     }
@@ -117,7 +101,7 @@ public class GRPCClient {
             while( true ){
                 String[] userInfo = view.loginView();
                 int studentID = client.login( userInfo[0], userInfo[1] );
-                if( studentID == 0 ){System.out.println( "User is not Existed" );}
+                if( studentID == 0 ) System.out.println( "User is not Existed" );
                 else if ( studentID == -1 ){System.out.println( "Error!!" );}
                 else {
                     client.setToken( studentID );
