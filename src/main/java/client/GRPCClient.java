@@ -4,7 +4,7 @@ import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import server.common.TUIView;
+
 import java.util.Scanner;
 
 public class GRPCClient {
