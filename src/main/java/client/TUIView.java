@@ -5,10 +5,24 @@ import java.io.InputStreamReader;
 public class TUIView {
     public void mainView() {
         System.out.println("Select Operation.");
-        System.out.println("1. Load Students");
-        System.out.println("2. Load Courses");
-        System.out.println("3. Load Logs");
+        System.out.println("1. Show Students List");
+        System.out.println("2. Show Courses List");
+        System.out.println("3. Show Logs");
+        System.out.println("4. Delete Course");
+        System.out.println("5. Delete Student");
+        System.out.println("6. Register Course");
         System.out.println("0. Exit");
+    }
+    public void introView(){
+        System.out.println( "Choose Option" );
+        System.out.println( "1. Log In" );
+        System.out.println( "2. Register Student" );
+        System.out.println( "3. Find ID" );
+        System.out.println( "4. Find PW" );
+        System.out.println( "0. Exit" );
+    }
+    public void studentRegisterView(){
+
     }
     public String[] loginView() {
         String id;
