@@ -11,6 +11,13 @@ message StudentMessage {
   message LoadStudentResponse {
     repeated Student students = 1;
   }
+  message DeleteStudentRequest {
+    int32 userID = 1;
+    Student student = 2;
+  }
+  message DeleteStudentResponse {
+    int32 studentID = 1;
+  }
   message Student {
     int32 studentID = 1;
     string lastName = 2;
@@ -25,6 +32,13 @@ message CourseMessage {
   }
   message LoadCourseResponse {
     repeated Course courses = 1;
+  }
+  message DeleteCourseRequest {
+    int32 userID = 1;
+    Course course = 2;
+  }
+  message DeleteCourseResponse {
+    int32 courseID = 1;
   }
   message Course {
     int32 courseID = 1;
@@ -99,4 +113,10 @@ service GetAllLogService {
 }
 service AddLogService {
   rpc addLog( LogMessage.AddLogRequest ) returns ( LogMessage.AddLogResponse ){}
+}
+service DeleteCourseService {
+  rpc deleteCourse( CourseMessage.DeleteCourseRequest ) returns ( CourseMessage.DeleteCourseResponse ){}
+}
+service DeleteStudentService {
+  rpc deleteStudent( StudentMessage.DeleteStudentRequest ) returns ( StudentMessage.DeleteStudentResponse ){}
 }

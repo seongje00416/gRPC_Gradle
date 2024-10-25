@@ -1,4 +1,4 @@
-package client;
+package client.common;
 
 public class ClientConstants {
     public static final String SEVER_URL = "localhost";
@@ -8,4 +8,5 @@ public class ClientConstants {
     public static final String LOG_COMMAND_RETRIEVE_STUDENTS = "Load Students";
     public static final String LOG_COMMAND_RETRIEVE_COURSES = "Load Courses";
     public static final String LOG_COMMAND_RETRIEVE_LOGS = "Load Logs";
+    public static final String LOG_COMMAND_DELETE_STUDENT = "Remove Student";
 }

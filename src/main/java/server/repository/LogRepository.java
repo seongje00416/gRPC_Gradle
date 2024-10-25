@@ -49,7 +49,7 @@ public class LogRepository {
             FileWriter fw = new FileWriter( LOG_PATH, true );
             fw.write( log.getTimestamp() + "  |   " + log.getUserID() + "    |    " + log.getCommand() + '\n' );
             fw.flush();
-            return log.getLogID();
+            return 1;
         } catch (IOException e) {
             return -1;
         }

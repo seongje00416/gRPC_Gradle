@@ -28,4 +28,10 @@ public class CourseRepository {
         } catch (Exception e) {System.out.println("Course Repository Error");}
         return courses;
     }
+
+    public int deleteCourse( Course course ){
+        DatabaseConnection conn = new DatabaseConnection();
+        String query = "DELETE FROM courses WHERE course_id = " + course.getCourseID();
+        return conn.isSuccess( query );
+    }
 }

@@ -29,5 +29,9 @@ public class StudentRepository {
         } catch( Exception e ){System.out.println( "Code 703: 문제가 발생했습니다." );}
         return students;
     }
-
+    public int deleteStudent( Student student ){
+        DatabaseConnection conn = new DatabaseConnection();
+        String query = "DELETE FROM students WHERE student_id=" + student.getStudentID();
+        return conn.isSuccess( query );
+    }
 }

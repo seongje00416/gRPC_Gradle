@@ -1,11 +1,16 @@
 package client;
-import com.example.grpc.*;
+
+import client.common.ClientConstants;
+import client.common.TUIView;
+import client.course.ClientCourse;
+import client.log.ClientLog;
+import client.user.ClientUser;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
-
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class GRPCClient {
     private final ManagedChannel channel;
@@ -16,115 +21,63 @@ public class GRPCClient {
         try { this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build(); }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
     }
+    public ManagedChannel getChannel() { return this.channel; };
     public void setToken( int id ) {this.studentIDToken = id;}
     public int getToken() { return this.studentIDToken; }
     public void shutdown() throws GRPCClientException {
         try { channel.shutdownNow(); }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.SHUTDOWN_ERROR, "Error shutting down client", e);}
     }
-    public void loadStudent() throws GRPCClientException {
-        addLog( ClientConstants.LOG_COMMAND_RETRIEVE_STUDENTS );
-        LoadStudentServiceGrpc.LoadStudentServiceBlockingStub loadStudentStub = LoadStudentServiceGrpc.newBlockingStub(this.channel);
-        try{
-            StudentMessage.LoadStudentRequest loadStudentRequest = StudentMessage.LoadStudentRequest.newBuilder().build();
-            StudentMessage.LoadStudentResponse loadStudentResponse = loadStudentStub.loadStudent(loadStudentRequest);
-            this.view.listViewStart();
-            for(StudentMessage.Student student : loadStudentResponse.getStudentsList() ){
-                this.view.lineView();
-                System.out.println( "Student Number: " + student.getStudentID() );
-                System.out.println( "Student Name: " + student.getLastName() + " " + student.getFirstName() );
-                System.out.println( "Student Department: " + student.getDepartment() );
-                System.out.print( "Success Register Course: ");
-                for( Integer courseNumber : student.getClearCourseList() ) System.out.print( courseNumber + " " );
-                System.out.print('\n');
-                this.view.lineView();
-            }
-            this.view.listViewEnd();
-        } catch ( StatusRuntimeException e) {throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);}
-    }
-    public void loadCourse() throws GRPCClientException {
-        addLog( ClientConstants.LOG_COMMAND_RETRIEVE_COURSES );
-        LoadCourseServiceGrpc.LoadCourseServiceBlockingStub loadCourseStub = LoadCourseServiceGrpc.newBlockingStub(this.channel);
-        try{
-            CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder().build();
-            CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse(loadCourseRequest);
-            this.view.listViewStart();
-            for(CourseMessage.Course course : loadCourseResponse.getCoursesList() ){
-                this.view.lineView();
-                System.out.println( "Course Number: " + course.getCourseID() );
-                System.out.println( "Course Name: " + course.getCourseName() );
-                System.out.println( "Professor: " + course.getProfessor() );
-                System.out.print( "Pre Requisite Courses: ");
-                for( Integer courseNumber : course.getPrerequisiteCourseList() ) System.out.print( courseNumber + " " );
-                System.out.print('\n');
-                this.view.lineView();
-            }
-            this.view.listViewEnd();
-        } catch( StatusRuntimeException e) {throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load course", e);}
-    }
-    public int login( String id, String pw ){
-        LogInServiceGrpc.LogInServiceBlockingStub loginStub = LogInServiceGrpc.newBlockingStub( this.channel );
-        try{
-            LogInMessage.LogInRequest loginRequest = LogInMessage.LogInRequest.newBuilder().setStudentID( id ).setPassword( pw ).build();
-            LogInMessage.LogInResponse loginResponse = loginStub.logIn( loginRequest );
-            return loginResponse.getStudentID();
-        } catch ( Exception e ) {System.out.println( "Fail to Login" );}
-        return -1;
-    }
-    public void addLog( String command ) {
-        AddLogServiceGrpc.AddLogServiceBlockingStub addLogStub = AddLogServiceGrpc.newBlockingStub( this.channel );
-        LogMessage.Log newLog = LogMessage.Log.newBuilder().setCommand( command ).setUserID( studentIDToken ).build();
-        try{
-            LogMessage.AddLogRequest addLogRequest = LogMessage.AddLogRequest.newBuilder().setUserID(studentIDToken).setLog( newLog ).build();
-            LogMessage.AddLogResponse addLogResponse = addLogStub.addLog( addLogRequest );
-            if( addLogResponse.getLogID() == 0 && !command.equals("login") ) System.out.println( "Add Log Failed" );
-        } catch( Exception e ){System.out.println( "Add Log Failed: Error" );}
-    }
-    public void getAllLog(){
-        addLog( ClientConstants.LOG_COMMAND_RETRIEVE_LOGS );
-        GetAllLogServiceGrpc.GetAllLogServiceBlockingStub getAllLogStub = GetAllLogServiceGrpc.newBlockingStub( this.channel );
-        try{
-            LogMessage.GetAllLogRequest getAllLogRequest = LogMessage.GetAllLogRequest.newBuilder().setUserID( studentIDToken ).build();
-            LogMessage.GetAllLogResponse getAllLogResponse = getAllLogStub.getAllLog( getAllLogRequest );
-            this.view.listViewStart();
-            System.out.println( "       Time          |     User      |       Command         " );
-            for( LogMessage.Log log : getAllLogResponse.getLogsList() ) System.out.println( log.getTimestamp() + "  |   " + log.getUserID() + "    |    " + log.getCommand() );
-            this.view.listViewEnd();
-        } catch( Exception e ){throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load Logs", e);}
-    }
     public static void main(String[] args) {
         GRPCClient client = null;
-        Scanner sc = new Scanner(System.in);
+        BufferedReader sc = new BufferedReader( new InputStreamReader( System.in ) );
         TUIView view = new TUIView();
         try {
             client = new GRPCClient(ClientConstants.SEVER_URL, ClientConstants.SERVER_PORT);
+            ClientUser userService = new ClientUser(client.getChannel(), client.getToken());
+            ClientCourse courseService = new ClientCourse(client.getChannel(), client.getToken());
+            ClientLog logService = new ClientLog(client.getChannel(), client.getToken() );
             while( true ){
                 String[] userInfo = view.loginView();
-                int studentID = client.login( userInfo[0], userInfo[1] );
+                int studentID = userService.login( userInfo[0], userInfo[1] );
                 if( studentID == 0 ) System.out.println( ClientConstants.USER_NOT_FOUND_MESSAGE );
                 else if ( studentID == -1 ){System.out.println( "Error!!" );}
                 else {
                     client.setToken( studentID );
-                    client.addLog( ClientConstants.LOG_COMMAND_LOGIN );
+                    userService.refreshToken(client.getToken());
+                    courseService.refreshToken(client.getToken());
+                    logService.refreshToken(client.getToken());
+                    logService.addLog( ClientConstants.LOG_COMMAND_LOGIN );
                     break;
                 }
             }
             while (true) {
                 view.mainView();
                 int flag;
-                try {flag = Integer.parseInt(sc.nextLine());}
+                try {flag = Integer.parseInt(sc.readLine());}
                 catch (NumberFormatException e) {throw new GRPCClientException(GRPCClientException.ErrorType.INPUT_ERROR, "Invalid input. Please enter a number.", e);}
                 switch (flag) {
                     case 1:
-                        client.loadStudent();
+                        userService.loadStudent();
+                        logService.addLog( ClientConstants.LOG_COMMAND_RETRIEVE_STUDENTS );
                         break;
                     case 2:
-                        client.loadCourse();
+                        courseService.loadCourse();
+                        logService.addLog( ClientConstants.LOG_COMMAND_RETRIEVE_COURSES );
                         break;
                     case 3:
-                        client.getAllLog();
+                        logService.getAllLog();
+                        logService.addLog( ClientConstants.LOG_COMMAND_RETRIEVE_LOGS );
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        userService.deleteStudent();
+                        logService.addLog( ClientConstants.LOG_COMMAND_DELETE_STUDENT );
                         break;
                     case 0:
+                        sc.close();
+                        System.exit(0);
                         return;
                     default:
                         System.out.println("Invalid option. Please try again.");
@@ -133,12 +86,14 @@ public class GRPCClient {
         } catch (GRPCClientException e) {
             System.err.println("Error: " + e.getMessage());
             System.err.println("Error Type: " + e.getErrorType());
-        } finally {
+        } catch ( IOException e ){
+            System.out.println( "I/O Error" );
+        }
+        finally {
             if (client != null) {
                 try {client.shutdown();}
                 catch (GRPCClientException e) {System.err.println("Error shutting down client: " + e.getMessage());}
             }
-            sc.close();
         }
     }
 }
