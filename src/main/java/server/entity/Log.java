@@ -1,15 +1,18 @@
 package server.entity;
+import com.google.type.DateTime;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Log {
     private int logID;
-    private Date timestamp;
+    private String timestamp;
     private String command;
     private int userID;
     public void setLogID( int loggingID ){
         this.logID = loggingID;
     }
-    public void setTimestamp( Date datetime ){
+    public void setTimestamp( String datetime ){
         this.timestamp = datetime;
     }
     public void setCommand( String command ){
@@ -21,7 +24,7 @@ public class Log {
     public int getLogID(){
         return this.logID;
     }
-    public Date getTimestamp(){
+    public String getTimestamp(){
         return this.timestamp;
     }
     public String getCommand(){

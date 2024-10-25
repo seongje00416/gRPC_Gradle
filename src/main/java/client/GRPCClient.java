@@ -23,7 +23,7 @@ public class GRPCClient {
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.SHUTDOWN_ERROR, "Error shutting down client", e);}
     }
     public void loadStudent() throws GRPCClientException {
-        addLog( "load Students" );
+        addLog( ClientConstants.LOG_COMMAND_RETRIEVE_STUDENTS );
         LoadStudentServiceGrpc.LoadStudentServiceBlockingStub loadStudentStub = LoadStudentServiceGrpc.newBlockingStub(this.channel);
         try{
             StudentMessage.LoadStudentRequest loadStudentRequest = StudentMessage.LoadStudentRequest.newBuilder().build();
@@ -43,7 +43,7 @@ public class GRPCClient {
         } catch ( StatusRuntimeException e) {throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);}
     }
     public void loadCourse() throws GRPCClientException {
-        addLog( "load Courses" );
+        addLog( ClientConstants.LOG_COMMAND_RETRIEVE_COURSES );
         LoadCourseServiceGrpc.LoadCourseServiceBlockingStub loadCourseStub = LoadCourseServiceGrpc.newBlockingStub(this.channel);
         try{
             CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder().build();
@@ -81,14 +81,14 @@ public class GRPCClient {
         } catch( Exception e ){System.out.println( "Add Log Failed: Error" );}
     }
     public void getAllLog(){
-        addLog( "load Logs" );
+        addLog( ClientConstants.LOG_COMMAND_RETRIEVE_LOGS );
         GetAllLogServiceGrpc.GetAllLogServiceBlockingStub getAllLogStub = GetAllLogServiceGrpc.newBlockingStub( this.channel );
         try{
             LogMessage.GetAllLogRequest getAllLogRequest = LogMessage.GetAllLogRequest.newBuilder().setUserID( studentIDToken ).build();
             LogMessage.GetAllLogResponse getAllLogResponse = getAllLogStub.getAllLog( getAllLogRequest );
             this.view.listViewStart();
-            System.out.println( "|          Time        |    User    |    Command    |" );
-            for( LogMessage.Log log : getAllLogResponse.getLogsList() ) System.out.println( " " + log.getTimestamp() + "    " + log.getUserID() + "    " + log.getCommand() );
+            System.out.println( "       Time          |     User      |       Command         " );
+            for( LogMessage.Log log : getAllLogResponse.getLogsList() ) System.out.println( log.getTimestamp() + "  |   " + log.getUserID() + "    |    " + log.getCommand() );
             this.view.listViewEnd();
         } catch( Exception e ){throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load Logs", e);}
     }
@@ -97,16 +97,15 @@ public class GRPCClient {
         Scanner sc = new Scanner(System.in);
         TUIView view = new TUIView();
         try {
-            client = new GRPCClient("localhost", 8080);
+            client = new GRPCClient(ClientConstants.SEVER_URL, ClientConstants.SERVER_PORT);
             while( true ){
                 String[] userInfo = view.loginView();
                 int studentID = client.login( userInfo[0], userInfo[1] );
-                if( studentID == 0 ) System.out.println( "User is not Existed" );
+                if( studentID == 0 ) System.out.println( ClientConstants.USER_NOT_FOUND_MESSAGE );
                 else if ( studentID == -1 ){System.out.println( "Error!!" );}
                 else {
                     client.setToken( studentID );
-                    System.out.println( "Set Token: " + client.getToken() );
-                    client.addLog( "login" );
+                    client.addLog( ClientConstants.LOG_COMMAND_LOGIN );
                     break;
                 }
             }
