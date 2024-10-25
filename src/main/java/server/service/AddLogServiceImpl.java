@@ -5,6 +5,7 @@ import com.google.type.DateTime;
 import io.grpc.stub.StreamObserver;
 import server.entity.Log;
 import server.repository.LogRepository;
+import server.util.MessageConverter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,9 +18,8 @@ public class AddLogServiceImpl extends AddLogServiceGrpc.AddLogServiceImplBase {
     @Override
     public void addLog( LogMessage.AddLogRequest request, StreamObserver<LogMessage.AddLogResponse> responseObserver ){
         LogRepository repository = new LogRepository();
-        Log log = new Log();
-        log.setUserID( request.getLog().getUserID() );
-        log.setCommand( request.getLog().getCommand() );
+        MessageConverter converter = new MessageConverter();
+        Log log = converter.messageToEntity( request.getLog() );
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         log.setTimestamp( LocalDateTime.now().format(formatter).toString() );
         int result = repository.addLog( log );

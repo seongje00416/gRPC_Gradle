@@ -1,9 +1,12 @@
 package server.service;
 import com.example.grpc.LoadCourseServiceGrpc;
 import com.example.grpc.CourseMessage;
+import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
 import server.entity.Course;
 import server.repository.CourseRepository;
+import server.util.MessageConverter;
+
 import java.util.Vector;
 
 public class LoadCourseServiceImpl extends LoadCourseServiceGrpc.LoadCourseServiceImplBase {
@@ -19,15 +22,9 @@ public class LoadCourseServiceImpl extends LoadCourseServiceGrpc.LoadCourseServi
 
     public Vector<CourseMessage.Course> fetchCourseList() {
         CourseRepository repository = new CourseRepository();
+        MessageConverter converter = new MessageConverter();
         Vector<CourseMessage.Course> courses = new Vector<CourseMessage.Course>();
-        for(Course course : repository.getAllCourse() ){
-            CourseMessage.Course.Builder temp = CourseMessage.Course.newBuilder()
-                    .setCourseID( course.getCourseID() )
-                    .setProfessor( course.getProfessor() )
-                    .setCourseName( course.getCourseName() );
-            for( Integer prerequisiteCourse : course.getPrerequisiteCourses() ){temp.addPrerequisiteCourse( prerequisiteCourse );}
-            courses.add( temp.build() );
-        }
+        for(Course course : repository.getAllCourse() ) courses.add( converter.entityToMessage( course ) );
         return courses;
     }
 }

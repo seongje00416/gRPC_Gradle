@@ -48,23 +48,22 @@ public class ClientUser {
                 System.out.println(index + ": " + loadStudentResponse.getStudents(index).getStudentID() + " " + loadStudentResponse.getStudents(index).getFirstName());
             }
             this.view.listViewEnd();
-            System.out.print("삭제할 학생의 번호를 입력하세요: ");
+            System.out.print("Input Delete Number: ");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             int index = Integer.parseInt(br.readLine());
-            if ( index >= loadStudentResponse.getStudentsCount() ) System.out.println( "범위 내 숫자를 입력해주세요" );
+            if ( index >= loadStudentResponse.getStudentsCount() ) System.out.println( "Input Number must in Range" );
             else {
                 StudentMessage.Student selectedStudent = loadStudentResponse.getStudents(index);
                 DeleteStudentServiceGrpc.DeleteStudentServiceBlockingStub deleteStudentStub = DeleteStudentServiceGrpc.newBlockingStub(this.channel);
                 StudentMessage.DeleteStudentRequest deleteStudentRequest = StudentMessage.DeleteStudentRequest.newBuilder().setStudent(selectedStudent).setUserID(this.studentToken).build();
                 StudentMessage.DeleteStudentResponse deleteStudentResponse = deleteStudentStub.deleteStudent(deleteStudentRequest);
-                if( deleteStudentResponse.getStudentID() == -1 ) System.out.println( "학생 삭제에 실패했습니다" );
-                else System.out.println( "학생 삭제에 성공했습니다" );
+                if( deleteStudentResponse.getStudentID() == -1 ) System.out.println( "Student Delete Failed" );
+                else System.out.println( "Student Delete Success" );
             }
         } catch (StatusRuntimeException e) {
-            //throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);
-            e.printStackTrace();
+            throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);
         } catch( Exception e ){
-            System.out.println( "삭제 오류가 발생했습니다." );
+            System.out.println( "Delete Error ." );
         }
     }
     public int login( String id, String pw ){

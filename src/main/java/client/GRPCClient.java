@@ -70,6 +70,8 @@ public class GRPCClient {
                         logService.addLog( ClientConstants.LOG_COMMAND_RETRIEVE_LOGS );
                         break;
                     case 4:
+                        courseService.deleteCourse();
+                        logService.addLog( ClientConstants.LOG_COMMAND_DELETE_COURSE );
                         break;
                     case 5:
                         userService.deleteStudent();

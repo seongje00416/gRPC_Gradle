@@ -1,9 +1,11 @@
 package server.service;
 import com.example.grpc.GetAllLogServiceGrpc;
 import com.example.grpc.LogMessage;
+import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
 import server.entity.Log;
 import server.repository.LogRepository;
+import server.util.MessageConverter;
 
 import java.util.Vector;
 
@@ -19,15 +21,9 @@ public class GetAllLogServiceImpl extends GetAllLogServiceGrpc.GetAllLogServiceI
     }
     public Vector<LogMessage.Log> fetchGetAllLog(){
         LogRepository repository = new LogRepository();
+        MessageConverter converter = new MessageConverter();
         Vector<LogMessage.Log> logs = new Vector<LogMessage.Log>();
-        for( Log log : repository.getAllLog() ){
-            LogMessage.Log.Builder temp = LogMessage.Log.newBuilder()
-                    .setLogID( log.getLogID() )
-                    .setCommand( log.getCommand() )
-                    .setTimestamp( log.getTimestamp().toString() )
-                    .setUserID( log.getUserID() );
-            logs.add( temp.build() );
-        }
+        for( Log log : repository.getAllLog() ) logs.add( converter.entityToMessage( log ) );
         return logs;
     }
 }

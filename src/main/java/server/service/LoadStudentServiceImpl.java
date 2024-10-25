@@ -4,6 +4,8 @@ import com.example.grpc.StudentMessage;
 import io.grpc.stub.StreamObserver;
 import server.entity.Student;
 import server.repository.StudentRepository;
+import server.util.MessageConverter;
+
 import java.util.Vector;
 
 public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentServiceImplBase {
@@ -18,16 +20,9 @@ public class LoadStudentServiceImpl extends LoadStudentServiceGrpc.LoadStudentSe
     }
     public Vector<StudentMessage.Student> fetchStudentList() {
         StudentRepository repository = new StudentRepository();
+        MessageConverter converter = new MessageConverter();
         Vector<StudentMessage.Student> students = new Vector<StudentMessage.Student>();
-        for( Student student : repository.getAllStudent() ){
-            StudentMessage.Student.Builder temp = StudentMessage.Student.newBuilder()
-                    .setStudentID( student.getStudentID() )
-                    .setLastName( student.getLastName() )
-                    .setFirstName( student.getFirstName() )
-                    .setDepartment( student.getDepartment() );
-            for( Integer clearCourse : student.getClearCourses() ){temp.addClearCourse( clearCourse );}
-            students.add( temp.build() );
-        }
+        for( Student student : repository.getAllStudent() ) students.add( converter.entityToMessage( student ) );
         return students;
     }
 }
