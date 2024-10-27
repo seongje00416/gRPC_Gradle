@@ -18,6 +18,13 @@ message StudentMessage {
   message DeleteStudentResponse {
     int32 studentID = 1;
   }
+  message MakeReservationRequest {
+    int32 studentID = 1;
+    int32 courseID = 2;
+  }
+  message MakeReservationResponse {
+    int32 studentID = 1;
+  }
   message Student {
     int32 studentID = 1;
     string lastName = 2;
@@ -119,4 +126,7 @@ service DeleteCourseService {
 }
 service DeleteStudentService {
   rpc deleteStudent( StudentMessage.DeleteStudentRequest ) returns ( StudentMessage.DeleteStudentResponse ){}
+}
+service MakeReservationService {
+  rpc makeReservation( StudentMessage.MakeReservationRequest ) returns ( StudentMessage.MakeReservationResponse ){}
 }

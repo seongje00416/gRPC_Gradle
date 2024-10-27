@@ -77,6 +77,10 @@ public class GRPCClient {
                         userService.deleteStudent();
                         logService.addLog( ClientConstants.LOG_COMMAND_DELETE_STUDENT );
                         break;
+                    case 6:
+                        userService.makeReservation();
+                        logService.addLog( ClientConstants.LOG_COMMAND_MAKE_RESERVATION );
+                        break;
                     case 0:
                         sc.close();
                         System.exit(0);

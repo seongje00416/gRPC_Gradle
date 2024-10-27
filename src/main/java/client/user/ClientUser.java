@@ -75,4 +75,28 @@ public class ClientUser {
         } catch ( Exception e ) {System.out.println( "Fail to Login" );}
         return -1;
     }
+    public void makeReservation(){
+        LoadCourseServiceGrpc.LoadCourseServiceBlockingStub loadCourseStub = LoadCourseServiceGrpc.newBlockingStub(this.channel);
+        CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder().build();
+        CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse( loadCourseRequest );
+        this.view.listViewStart();
+        System.out.println( "     Course Number     |     Professor     |     Course Name     " );
+        for( CourseMessage.Course course : loadCourseResponse.getCoursesList() ){
+            System.out.println( "       " + course.getCourseID() + "           " + course.getProfessor() + "         " + course.getCourseName() );
+        }
+        this.view.listViewEnd();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        try{
+            int selectCourse = Integer.parseInt( br.readLine() );
+            MakeReservationServiceGrpc.MakeReservationServiceBlockingStub makeReservationStub = MakeReservationServiceGrpc.newBlockingStub(this.channel);
+            StudentMessage.MakeReservationRequest.Builder makeReservationRequest = StudentMessage.MakeReservationRequest.newBuilder();
+            makeReservationRequest.setStudentID( this.studentToken );
+            makeReservationRequest.setCourseID( selectCourse );
+            StudentMessage.MakeReservationRequest request = makeReservationRequest.build();
+            StudentMessage.MakeReservationResponse makeReservationResponse = makeReservationStub.makeReservation( request );
+            if( makeReservationResponse.getStudentID() == -1 ) System.out.println( "Make Reservation Failed" );
+            else System.out.println( "Make Reservation Success" );
+        } catch( Exception e ) {System.out.println( "Fail to Load Course" );}
+
+    }
 }

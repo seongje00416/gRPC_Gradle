@@ -24,8 +24,8 @@ public class AddLogServiceImpl extends AddLogServiceGrpc.AddLogServiceImplBase {
         log.setTimestamp( LocalDateTime.now().format(formatter).toString() );
         int result = repository.addLog( log );
         LogMessage.AddLogResponse.Builder response = LogMessage.AddLogResponse.newBuilder();
-        if( result != -1 ){response.setLogID( log.getLogID() );}
-        else {response.setLogID( -1 );}
+        if( result != -1 )response.setLogID( log.getLogID() );
+        else response.setLogID( -1 );
         LogMessage.AddLogResponse responseBuild = response.build();
         responseObserver.onNext( responseBuild );
         responseObserver.onCompleted();
