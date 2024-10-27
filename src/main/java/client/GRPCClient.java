@@ -15,9 +15,7 @@ import java.io.InputStreamReader;
 public class GRPCClient {
     private final ManagedChannel channel;
     private int studentIDToken;
-    private final TUIView view;
     public GRPCClient(String host, int port) {
-        this.view = new TUIView();
         try { this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build(); }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
     }

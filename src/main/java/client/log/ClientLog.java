@@ -6,7 +6,6 @@ import com.example.grpc.GetAllLogServiceGrpc;
 import com.example.grpc.LogMessage;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
-
 public class ClientLog {
     private final ManagedChannel channel;
     private final TUIView view;
@@ -35,8 +34,6 @@ public class ClientLog {
             LogMessage.AddLogRequest addLogRequest = LogMessage.AddLogRequest.newBuilder().setUserID(this.studentToken).setLog(newLog).build();
             LogMessage.AddLogResponse addLogResponse = addLogStub.addLog(addLogRequest);
             if( addLogResponse.getLogID() == -1 ) System.out.println( "Add Log Failed Error" );
-        } catch (Exception e) {
-            System.out.println("Add Log Failed: Error");
-        }
+        } catch (Exception e) { System.out.println("Add Log Failed: Error"); }
     }
 }

@@ -10,7 +10,6 @@ import io.grpc.StatusRuntimeException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
 public class ClientCourse {
     private final ManagedChannel channel;
     private final TUIView view;
@@ -46,9 +45,7 @@ public class ClientCourse {
             CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder().build();
             CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse( loadCourseRequest );
             this.view.listViewStart();
-            for( int index = 0; index < loadCourseResponse.getCoursesCount(); index++ ){
-                System.out.println(index + ": " + loadCourseResponse.getCourses(index).getCourseName() + " " + loadCourseResponse.getCourses(index).getCourseID());
-            }
+            for( int index = 0; index < loadCourseResponse.getCoursesCount(); index++ ) System.out.println(index + ": " + loadCourseResponse.getCourses(index).getCourseName() + " " + loadCourseResponse.getCourses(index).getCourseID());
             this.view.listViewEnd();
             System.out.println( "Input Delete Number: " );
             BufferedReader br = new BufferedReader( new InputStreamReader( System.in ) );
@@ -62,8 +59,6 @@ public class ClientCourse {
                 if( deleteCourseResponse.getCourseID() == -1 ) System.out.println( "Course Delete Failed" );
                 else System.out.println( "Course Delete Success.");
             }
-        } catch( Exception e ){
-            System.out.println( "ERROR" );
-        }
+        } catch( Exception e ){ System.out.println( "ERROR" ); }
     }
 }

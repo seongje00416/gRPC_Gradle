@@ -8,7 +8,6 @@ import io.grpc.StatusRuntimeException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
 public class ClientUser {
     private final ManagedChannel channel;
     private final TUIView view;
@@ -44,9 +43,7 @@ public class ClientUser {
             StudentMessage.LoadStudentRequest loadStudentRequest = StudentMessage.LoadStudentRequest.newBuilder().build();
             StudentMessage.LoadStudentResponse loadStudentResponse = loadStudentStub.loadStudent(loadStudentRequest);
             this.view.listViewStart();
-            for (int index = 0; index < loadStudentResponse.getStudentsCount(); index++) {
-                System.out.println(index + ": " + loadStudentResponse.getStudents(index).getStudentID() + " " + loadStudentResponse.getStudents(index).getFirstName());
-            }
+            for (int index = 0; index < loadStudentResponse.getStudentsCount(); index++) System.out.println(index + ": " + loadStudentResponse.getStudents(index).getStudentID() + " " + loadStudentResponse.getStudents(index).getFirstName());
             this.view.listViewEnd();
             System.out.print("Input Delete Number: ");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -60,11 +57,9 @@ public class ClientUser {
                 if( deleteStudentResponse.getStudentID() == -1 ) System.out.println( "Student Delete Failed" );
                 else System.out.println( "Student Delete Success" );
             }
-        } catch (StatusRuntimeException e) {
-            throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);
-        } catch( Exception e ){
-            System.out.println( "Delete Error ." );
         }
+        catch (StatusRuntimeException e) {throw new GRPCClientException(GRPCClientException.ErrorType.RPC_ERROR, "Failed to load student", e);}
+        catch( Exception e ){System.out.println( "Delete Error ." );}
     }
     public int login( String id, String pw ){
         LogInServiceGrpc.LogInServiceBlockingStub loginStub = LogInServiceGrpc.newBlockingStub( this.channel );
@@ -81,9 +76,7 @@ public class ClientUser {
         CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse( loadCourseRequest );
         this.view.listViewStart();
         System.out.println( "     Course Number     |     Professor     |     Course Name     " );
-        for( CourseMessage.Course course : loadCourseResponse.getCoursesList() ){
-            System.out.println( "       " + course.getCourseID() + "           " + course.getProfessor() + "         " + course.getCourseName() );
-        }
+        for( CourseMessage.Course course : loadCourseResponse.getCoursesList() ) System.out.println( "       " + course.getCourseID() + "           " + course.getProfessor() + "         " + course.getCourseName() );
         this.view.listViewEnd();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try{
