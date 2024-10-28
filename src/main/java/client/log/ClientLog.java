@@ -1,5 +1,6 @@
 package client.log;
 
+import client.common.SecretProtector;
 import client.common.TUIView;
 import com.example.grpc.AddLogServiceGrpc;
 import com.example.grpc.GetAllLogServiceGrpc;
@@ -10,10 +11,12 @@ public class ClientLog {
     private final ManagedChannel channel;
     private final TUIView view;
     private int studentToken;
-    public ClientLog( ManagedChannel channel, int studentToken ){
+    private SecretProtector protector;
+    public ClientLog(ManagedChannel channel, int studentToken, SecretProtector protector) {
         this.channel = channel;
         this.view = new TUIView();
         this.studentToken = studentToken;
+        this.protector = protector;
     }
     public void refreshToken( int token ) { this.studentToken = token; };
     public void getAllLog(){

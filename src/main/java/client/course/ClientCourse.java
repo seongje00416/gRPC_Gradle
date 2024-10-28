@@ -1,5 +1,6 @@
 package client.course;
 
+import client.common.SecretProtector;
 import client.common.TUIView;
 import com.example.grpc.CourseMessage;
 import com.example.grpc.DeleteCourseServiceGrpc;
@@ -14,10 +15,12 @@ public class ClientCourse {
     private final ManagedChannel channel;
     private final TUIView view;
     private int studentToken;
-    public ClientCourse( ManagedChannel channel, int studentToken ){
+    private SecretProtector protector;
+    public ClientCourse(ManagedChannel channel, int studentToken, SecretProtector protector ){
         this.channel = channel;
         this.view = new TUIView();
         this.studentToken = studentToken;
+        this.protector = protector;
     }
     public void refreshToken( int token ) { this.studentToken = token; };
     public void loadCourse() throws GRPCClientException {

@@ -1,9 +1,11 @@
 package client;
 
 import client.common.ClientConstants;
+import client.common.SecretProtector;
 import client.common.TUIView;
 import client.course.ClientCourse;
 import client.log.ClientLog;
+import client.secret.ClientSecret;
 import client.user.ClientUser;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
@@ -16,7 +18,9 @@ public class GRPCClient {
     private final ManagedChannel channel;
     private int studentIDToken;
     public GRPCClient(String host, int port) {
-        try { this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build(); }
+        try {
+            this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+        }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
     }
     public ManagedChannel getChannel() { return this.channel; };
@@ -32,9 +36,11 @@ public class GRPCClient {
         TUIView view = new TUIView();
         try {
             client = new GRPCClient(ClientConstants.SEVER_URL, ClientConstants.SERVER_PORT);
-            ClientUser userService = new ClientUser(client.getChannel(), client.getToken());
-            ClientCourse courseService = new ClientCourse(client.getChannel(), client.getToken());
-            ClientLog logService = new ClientLog(client.getChannel(), client.getToken() );
+            ClientSecret secretService = new ClientSecret( client.getChannel() );
+            SecretProtector protector = new SecretProtector( secretService.setPublicKey() );
+            ClientUser userService = new ClientUser(client.getChannel(), client.getToken(), protector );
+            ClientCourse courseService = new ClientCourse(client.getChannel(), client.getToken(), protector );
+            ClientLog logService = new ClientLog(client.getChannel(), client.getToken(), protector );
             while( true ){
                 String[] userInfo = view.loginView();
                 int studentID = userService.login( userInfo[0], userInfo[1] );
@@ -92,6 +98,8 @@ public class GRPCClient {
             System.err.println("Error Type: " + e.getErrorType());
         } catch ( IOException e ){
             System.out.println( "I/O Error" );
+        } catch ( Exception e ){
+            System.out.println( "Critical Error" );
         }
         finally {
             if (client != null) {

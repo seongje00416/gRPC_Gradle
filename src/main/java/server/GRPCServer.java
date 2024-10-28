@@ -3,12 +3,15 @@ import exception.GRPCServerException;
 import server.service.*;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import server.util.SecretProtector;
+
 import java.io.IOException;
 import java.net.BindException;
 
 public class GRPCServer {
     public static void main( String[] args ) {
         Server server = null;
+        SecretProtector protector = new SecretProtector();
         try {
             server = ServerBuilder.forPort( 8080 )
                     .addService( new LoadStudentServiceImpl() )
@@ -19,6 +22,7 @@ public class GRPCServer {
                     .addService( new DeleteStudentServiceImpl() )
                     .addService( new DeleteCourseServiceImpl() )
                     .addService( new MakeReservationServiceImpl() )
+                    .addService( new GetPublicKeyServiceImpl( protector.getPublicKey() ) )
                     .build()
                     .start();
             server.awaitTermination();
