@@ -10,5 +10,5 @@ public class ClientConstants {
     public static final String LOG_COMMAND_RETRIEVE_LOGS = "Load Logs";
     public static final String LOG_COMMAND_DELETE_STUDENT = "Remove Student";
     public static final String LOG_COMMAND_DELETE_COURSE = "Remove Course";
-    public static final String LOG_COMMAND_MAKE_RESERVATION = "Make ReservationS";
+    public static final String LOG_COMMAND_MAKE_RESERVATION = "Make Reservations";
 }

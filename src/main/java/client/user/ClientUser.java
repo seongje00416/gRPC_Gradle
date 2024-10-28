@@ -75,8 +75,8 @@ public class ClientUser {
         CourseMessage.LoadCourseRequest loadCourseRequest = CourseMessage.LoadCourseRequest.newBuilder().build();
         CourseMessage.LoadCourseResponse loadCourseResponse = loadCourseStub.loadCourse( loadCourseRequest );
         this.view.listViewStart();
-        System.out.println( "     Course Number     |     Professor     |     Course Name     " );
-        for( CourseMessage.Course course : loadCourseResponse.getCoursesList() ) System.out.println( "       " + course.getCourseID() + "           " + course.getProfessor() + "         " + course.getCourseName() );
+        System.out.println( "     Course Number     |     Professor     |        Course Name     " );
+        for( CourseMessage.Course course : loadCourseResponse.getCoursesList() ) System.out.println( "         " + course.getCourseID() + "                 " + course.getProfessor() + "              " + course.getCourseName() );
         this.view.listViewEnd();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try{
@@ -88,8 +88,9 @@ public class ClientUser {
             StudentMessage.MakeReservationRequest request = makeReservationRequest.build();
             StudentMessage.MakeReservationResponse makeReservationResponse = makeReservationStub.makeReservation( request );
             if( makeReservationResponse.getStudentID() == -1 ) System.out.println( "Make Reservation Failed" );
+            else if ( makeReservationResponse.getStudentID() == -2 ) System.out.println( "Selected Course is already registered");
             else System.out.println( "Make Reservation Success" );
-        } catch( Exception e ) {System.out.println( "Fail to Load Course" );}
+        } catch( Exception e ) { System.out.println( "Make Reservation Error"); }
 
     }
 }

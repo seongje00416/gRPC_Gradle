@@ -11,11 +11,19 @@ public class MakeReservationServiceImpl extends MakeReservationServiceGrpc.MakeR
     public void makeReservation(StudentMessage.MakeReservationRequest request, StreamObserver<StudentMessage.MakeReservationResponse> responseObserver) {
         StudentRepository repository = new StudentRepository();
         Student student = repository.getStudentByID( request.getStudentID() );
-        student.getClearCourses().add( request.getCourseID() );
-        int result = repository.updateStudent( student );
+        boolean isExisted = false;
+        for( Integer courseID : student.getClearCourses() ){
+            if( courseID == request.getCourseID() ) isExisted = true;
+        }
         StudentMessage.MakeReservationResponse.Builder response = StudentMessage.MakeReservationResponse.newBuilder();
-        if( result != -1 ) response.setStudentID( student.getStudentID() );
-        else response.setStudentID( -1 );
+        if( !isExisted ){
+            student.getClearCourses().add( request.getCourseID() );
+            int result = repository.updateStudent( student );
+            if( result != -1 ) response.setStudentID( student.getStudentID() );
+            else response.setStudentID( -1 );
+        } else {
+            response.setStudentID( -2 );
+        }
         StudentMessage.MakeReservationResponse responseBuilder = response.build();
         responseObserver.onNext( responseBuilder );
         responseObserver.onCompleted();

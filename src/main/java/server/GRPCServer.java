@@ -18,6 +18,7 @@ public class GRPCServer {
                     .addService( new GetAllLogServiceImpl() )
                     .addService( new DeleteStudentServiceImpl() )
                     .addService( new DeleteCourseServiceImpl() )
+                    .addService( new MakeReservationServiceImpl() )
                     .build()
                     .start();
             server.awaitTermination();
