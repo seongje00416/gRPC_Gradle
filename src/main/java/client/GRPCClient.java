@@ -89,6 +89,9 @@ public class GRPCClient {
                         sc.close();
                         System.exit(0);
                         return;
+                    case 77:
+                        System.out.println( secretService.setPublicKey() );
+                        break;
                     default:
                         System.out.println("Invalid option. Please try again.");
                 }

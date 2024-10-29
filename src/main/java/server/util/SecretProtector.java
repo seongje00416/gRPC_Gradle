@@ -25,7 +25,10 @@ public class SecretProtector {
         } catch( Exception e ) {System.out.println( "Encryptor Error" );}
     }
     public PublicKey getPublicKey() { return this.publicKey; }
-    public String decrypt( String encryptedSessionKey, String encryptedData ) throws Exception {
+    public String decrypt( String data ) throws Exception {
+        String[] inputString = data.split( ":::" );
+        String encryptedSessionKey = inputString[0];
+        String encryptedData = inputString[1];
         Cipher cipher = Cipher.getInstance( AuthenticateConstants.KEYGEN_ALGORITHM );
         cipher.init( Cipher.DECRYPT_MODE, this.privateKey );
         byte[] decryptedSessionKeyBytes = cipher.doFinal( Base64.getDecoder().decode( encryptedSessionKey ) );

@@ -16,13 +16,13 @@ public class SecretProtector {
         keyGenerator.init( ClientConstants.KEY_SIZE );
         this.secretKey = keyGenerator.generateKey();
     }
-    public String[] encrypt( String data ) throws Exception {
+    public String encrypt( String data ) throws Exception {
         Cipher cipher = Cipher.getInstance( ClientConstants.ENCRYPT_ALGORITHM );
         cipher.init( Cipher.ENCRYPT_MODE, this.publicKey );
         String encryptedSessionKey = Base64.getEncoder().encodeToString( cipher.doFinal( this.secretKey.getEncoded() ) );
         cipher = Cipher.getInstance( ClientConstants.ENCRYPT_ALGORITHM );
         cipher.init( Cipher.ENCRYPT_MODE, this.secretKey );
         String encryptedData = Base64.getEncoder().encodeToString( cipher.doFinal( data.getBytes() ) );
-        return new String[]{ encryptedSessionKey, encryptedData };
+        return encryptedSessionKey + ":::" + encryptedData;
     }
 }

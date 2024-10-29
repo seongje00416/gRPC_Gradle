@@ -20,7 +20,9 @@ public class ClientUser {
         this.studentToken = studentToken;
         this.protector = protector;
     }
-    public void refreshToken( int token ) { this.studentToken = token; };
+    public void refreshToken( int token ) {
+        this.studentToken = token;
+    };
     public void loadStudent() throws GRPCClientException {
         LoadStudentServiceGrpc.LoadStudentServiceBlockingStub loadStudentStub = LoadStudentServiceGrpc.newBlockingStub(this.channel);
         try{
