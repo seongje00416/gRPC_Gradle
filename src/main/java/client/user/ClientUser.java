@@ -12,16 +12,16 @@ import java.io.InputStreamReader;
 public class ClientUser {
     private final ManagedChannel channel;
     private final TUIView view;
-    private int studentToken;
-    private SecretProtector protector;
-    public ClientUser(ManagedChannel channel, int studentToken, SecretProtector protector) {
+    private String token;
+    private final SecretProtector protector;
+    public ClientUser(ManagedChannel channel, String token, SecretProtector protector) {
         this.channel = channel;
         this.view = new TUIView();
-        this.studentToken = studentToken;
+        this.token = token;
         this.protector = protector;
     }
-    public void refreshToken( int token ) {
-        this.studentToken = token;
+    public void refreshToken( String token ) {
+        this.token = token;
     };
     public void loadStudent() throws GRPCClientException {
         LoadStudentServiceGrpc.LoadStudentServiceBlockingStub loadStudentStub = LoadStudentServiceGrpc.newBlockingStub(this.channel);
@@ -57,7 +57,7 @@ public class ClientUser {
             else {
                 StudentMessage.Student selectedStudent = loadStudentResponse.getStudents(index);
                 DeleteStudentServiceGrpc.DeleteStudentServiceBlockingStub deleteStudentStub = DeleteStudentServiceGrpc.newBlockingStub(this.channel);
-                StudentMessage.DeleteStudentRequest deleteStudentRequest = StudentMessage.DeleteStudentRequest.newBuilder().setStudent(selectedStudent).setUserID(this.studentToken).build();
+                StudentMessage.DeleteStudentRequest deleteStudentRequest = StudentMessage.DeleteStudentRequest.newBuilder().setStudent(selectedStudent).setUserID( Integer.parseInt( this.token ) ).build();
                 StudentMessage.DeleteStudentResponse deleteStudentResponse = deleteStudentStub.deleteStudent(deleteStudentRequest);
                 if( deleteStudentResponse.getStudentID() == -1 ) System.out.println( "Student Delete Failed" );
                 else System.out.println( "Student Delete Success" );
@@ -88,7 +88,7 @@ public class ClientUser {
             int selectCourse = Integer.parseInt( br.readLine() );
             MakeReservationServiceGrpc.MakeReservationServiceBlockingStub makeReservationStub = MakeReservationServiceGrpc.newBlockingStub(this.channel);
             StudentMessage.MakeReservationRequest.Builder makeReservationRequest = StudentMessage.MakeReservationRequest.newBuilder();
-            makeReservationRequest.setStudentID( this.studentToken );
+            makeReservationRequest.setStudentID( Integer.parseInt( this.token ) );
             makeReservationRequest.setCourseID( selectCourse );
             StudentMessage.MakeReservationRequest request = makeReservationRequest.build();
             StudentMessage.MakeReservationResponse makeReservationResponse = makeReservationStub.makeReservation( request );

@@ -14,15 +14,15 @@ import java.io.InputStreamReader;
 public class ClientCourse {
     private final ManagedChannel channel;
     private final TUIView view;
-    private int studentToken;
-    private SecretProtector protector;
-    public ClientCourse(ManagedChannel channel, int studentToken, SecretProtector protector ){
+    private String token;
+    private final SecretProtector protector;
+    public ClientCourse(ManagedChannel channel, String token, SecretProtector protector ){
         this.channel = channel;
         this.view = new TUIView();
-        this.studentToken = studentToken;
+        this.token = token;
         this.protector = protector;
     }
-    public void refreshToken( int token ) { this.studentToken = token; };
+    public void refreshToken( String token ) { this.token = token; };
     public void loadCourse() throws GRPCClientException {
         LoadCourseServiceGrpc.LoadCourseServiceBlockingStub loadCourseStub = LoadCourseServiceGrpc.newBlockingStub(this.channel);
         try{
@@ -57,7 +57,7 @@ public class ClientCourse {
             else {
                 CourseMessage.Course selectedCourse = loadCourseResponse.getCourses( index );
                 DeleteCourseServiceGrpc.DeleteCourseServiceBlockingStub deleteCourseStub = DeleteCourseServiceGrpc.newBlockingStub( this.channel );
-                CourseMessage.DeleteCourseRequest deleteCourseRequest = CourseMessage.DeleteCourseRequest.newBuilder().setUserID( this.studentToken ).setCourse( selectedCourse ).build();
+                CourseMessage.DeleteCourseRequest deleteCourseRequest = CourseMessage.DeleteCourseRequest.newBuilder().setUserID( Integer.parseInt( this.token )).setCourse( selectedCourse ).build();
                 CourseMessage.DeleteCourseResponse deleteCourseResponse = deleteCourseStub.deleteCourse( deleteCourseRequest );
                 if( deleteCourseResponse.getCourseID() == -1 ) System.out.println( "Course Delete Failed" );
                 else System.out.println( "Course Delete Success.");

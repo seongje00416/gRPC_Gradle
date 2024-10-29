@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 
 public class GRPCClient {
     private final ManagedChannel channel;
-    private int studentIDToken;
+    private String token;
     public GRPCClient(String host, int port) {
         try {
             this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
@@ -24,8 +24,8 @@ public class GRPCClient {
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
     }
     public ManagedChannel getChannel() { return this.channel; };
-    public void setToken( int id ) {this.studentIDToken = id;}
-    public int getToken() { return this.studentIDToken; }
+    public void setToken( String encryptedID ) {this.token = encryptedID;}
+    public String getToken() { return this.token; }
     public void shutdown() throws GRPCClientException {
         try { channel.shutdownNow(); }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.SHUTDOWN_ERROR, "Error shutting down client", e);}
@@ -47,7 +47,7 @@ public class GRPCClient {
                 if( studentID == 0 ) System.out.println( ClientConstants.USER_NOT_FOUND_MESSAGE );
                 else if ( studentID == -1 ){System.out.println( "Error!!" );}
                 else {
-                    client.setToken( studentID );
+                    client.setToken( Integer.toString( studentID ) );
                     userService.refreshToken(client.getToken());
                     courseService.refreshToken(client.getToken());
                     logService.refreshToken(client.getToken());
