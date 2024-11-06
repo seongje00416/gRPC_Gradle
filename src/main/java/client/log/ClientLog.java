@@ -1,26 +1,28 @@
 package client.log;
 
+import client.common.SecretProtector;
 import client.common.TUIView;
 import com.example.grpc.AddLogServiceGrpc;
 import com.example.grpc.GetAllLogServiceGrpc;
 import com.example.grpc.LogMessage;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
-
 public class ClientLog {
     private final ManagedChannel channel;
     private final TUIView view;
-    private int studentToken;
-    public ClientLog( ManagedChannel channel, int studentToken ){
+    private String token;
+    private final SecretProtector protector;
+    public ClientLog(ManagedChannel channel, String token, SecretProtector protector) {
         this.channel = channel;
         this.view = new TUIView();
-        this.studentToken = studentToken;
+        this.token = token;
+        this.protector = protector;
     }
-    public void refreshToken( int token ) { this.studentToken = token; };
+    public void refreshToken( String token ) { this.token = token; };
     public void getAllLog(){
         GetAllLogServiceGrpc.GetAllLogServiceBlockingStub getAllLogStub = GetAllLogServiceGrpc.newBlockingStub( this.channel );
         try{
-            LogMessage.GetAllLogRequest getAllLogRequest = LogMessage.GetAllLogRequest.newBuilder().setUserID( this.studentToken ).build();
+            LogMessage.GetAllLogRequest getAllLogRequest = LogMessage.GetAllLogRequest.newBuilder().setUserID( Integer.parseInt( this.token ) ).build();
             LogMessage.GetAllLogResponse getAllLogResponse = getAllLogStub.getAllLog( getAllLogRequest );
             this.view.listViewStart();
             System.out.println( "       Time          |     User      |       Command         " );
@@ -30,13 +32,11 @@ public class ClientLog {
     }
     public void addLog( String command ) {
         AddLogServiceGrpc.AddLogServiceBlockingStub addLogStub = AddLogServiceGrpc.newBlockingStub(this.channel);
-        LogMessage.Log newLog = LogMessage.Log.newBuilder().setCommand(command).setUserID( this.studentToken ).build();
         try {
-            LogMessage.AddLogRequest addLogRequest = LogMessage.AddLogRequest.newBuilder().setUserID(this.studentToken).setLog(newLog).build();
+            LogMessage.Log newLog = LogMessage.Log.newBuilder().setCommand(command).setUserID( Integer.parseInt( this.token ) ).build();
+            LogMessage.AddLogRequest addLogRequest = LogMessage.AddLogRequest.newBuilder().setUserID( Integer.parseInt( this.token ) ).setLog(newLog).build();
             LogMessage.AddLogResponse addLogResponse = addLogStub.addLog(addLogRequest);
             if( addLogResponse.getLogID() == -1 ) System.out.println( "Add Log Failed Error" );
-        } catch (Exception e) {
-            System.out.println("Add Log Failed: Error");
-        }
+        } catch (Exception e) { System.out.println("Add Log Failed: Error"); }
     }
 }

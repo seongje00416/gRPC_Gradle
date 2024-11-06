@@ -18,6 +18,13 @@ message StudentMessage {
   message DeleteStudentResponse {
     int32 studentID = 1;
   }
+  message MakeReservationRequest {
+    int32 studentID = 1;
+    int32 courseID = 2;
+  }
+  message MakeReservationResponse {
+    int32 studentID = 1;
+  }
   message Student {
     int32 studentID = 1;
     string lastName = 2;
@@ -29,6 +36,7 @@ message StudentMessage {
 message CourseMessage {
   message LoadCourseRequest {
     int32 courseID = 1;
+    int32 userID = 2;
   }
   message LoadCourseResponse {
     repeated Course courses = 1;
@@ -92,7 +100,18 @@ message LogMessage {
     int32 userID = 4;
   }
 }
+message KeyMessage {
+  message GetPublicKeyRequest {
+    int32 accessID = 1;
+  }
+  message GetPublicKeyResponse {
+    string publicKey = 1;
+  }
+}
 
+service GetPublicKeyService {
+  rpc getPublicKey( KeyMessage.GetPublicKeyRequest ) returns ( KeyMessage.GetPublicKeyResponse ){}
+}
 service LoadStudentService {
   rpc LoadStudent( StudentMessage.LoadStudentRequest ) returns ( StudentMessage.LoadStudentResponse ){}
 }
@@ -119,4 +138,7 @@ service DeleteCourseService {
 }
 service DeleteStudentService {
   rpc deleteStudent( StudentMessage.DeleteStudentRequest ) returns ( StudentMessage.DeleteStudentResponse ){}
+}
+service MakeReservationService {
+  rpc makeReservation( StudentMessage.MakeReservationRequest ) returns ( StudentMessage.MakeReservationResponse ){}
 }

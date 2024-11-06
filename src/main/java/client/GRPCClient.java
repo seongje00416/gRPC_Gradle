@@ -1,9 +1,11 @@
 package client;
 
 import client.common.ClientConstants;
+import client.common.SecretProtector;
 import client.common.TUIView;
 import client.course.ClientCourse;
 import client.log.ClientLog;
+import client.secret.ClientSecret;
 import client.user.ClientUser;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
@@ -14,16 +16,16 @@ import java.io.InputStreamReader;
 
 public class GRPCClient {
     private final ManagedChannel channel;
-    private int studentIDToken;
-    private final TUIView view;
+    private String token;
     public GRPCClient(String host, int port) {
-        this.view = new TUIView();
-        try { this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build(); }
+        try {
+            this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+        }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.CONNECTION_ERROR, "Failed to initialize gRPC client", e);}
     }
     public ManagedChannel getChannel() { return this.channel; };
-    public void setToken( int id ) {this.studentIDToken = id;}
-    public int getToken() { return this.studentIDToken; }
+    public void setToken( String encryptedID ) {this.token = encryptedID;}
+    public String getToken() { return this.token; }
     public void shutdown() throws GRPCClientException {
         try { channel.shutdownNow(); }
         catch (Exception e) {throw new GRPCClientException(GRPCClientException.ErrorType.SHUTDOWN_ERROR, "Error shutting down client", e);}
@@ -34,16 +36,18 @@ public class GRPCClient {
         TUIView view = new TUIView();
         try {
             client = new GRPCClient(ClientConstants.SEVER_URL, ClientConstants.SERVER_PORT);
-            ClientUser userService = new ClientUser(client.getChannel(), client.getToken());
-            ClientCourse courseService = new ClientCourse(client.getChannel(), client.getToken());
-            ClientLog logService = new ClientLog(client.getChannel(), client.getToken() );
+            ClientSecret secretService = new ClientSecret( client.getChannel() );
+            SecretProtector protector = new SecretProtector( secretService.setPublicKey() );
+            ClientUser userService = new ClientUser(client.getChannel(), client.getToken(), protector );
+            ClientCourse courseService = new ClientCourse(client.getChannel(), client.getToken(), protector );
+            ClientLog logService = new ClientLog(client.getChannel(), client.getToken(), protector );
             while( true ){
                 String[] userInfo = view.loginView();
                 int studentID = userService.login( userInfo[0], userInfo[1] );
                 if( studentID == 0 ) System.out.println( ClientConstants.USER_NOT_FOUND_MESSAGE );
                 else if ( studentID == -1 ){System.out.println( "Error!!" );}
                 else {
-                    client.setToken( studentID );
+                    client.setToken( Integer.toString( studentID ) );
                     userService.refreshToken(client.getToken());
                     courseService.refreshToken(client.getToken());
                     logService.refreshToken(client.getToken());
@@ -77,10 +81,17 @@ public class GRPCClient {
                         userService.deleteStudent();
                         logService.addLog( ClientConstants.LOG_COMMAND_DELETE_STUDENT );
                         break;
+                    case 6:
+                        userService.makeReservation();
+                        logService.addLog( ClientConstants.LOG_COMMAND_MAKE_RESERVATION );
+                        break;
                     case 0:
                         sc.close();
                         System.exit(0);
                         return;
+                    case 77:
+                        System.out.println( secretService.setPublicKey() );
+                        break;
                     default:
                         System.out.println("Invalid option. Please try again.");
                 }
@@ -90,6 +101,8 @@ public class GRPCClient {
             System.err.println("Error Type: " + e.getErrorType());
         } catch ( IOException e ){
             System.out.println( "I/O Error" );
+        } catch ( Exception e ){
+            System.out.println( "Critical Error" );
         }
         finally {
             if (client != null) {
