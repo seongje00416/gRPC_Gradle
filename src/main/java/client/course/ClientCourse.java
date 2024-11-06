@@ -7,7 +7,6 @@ import com.example.grpc.LoadCourseServiceGrpc;
 import exception.GRPCClientException;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
