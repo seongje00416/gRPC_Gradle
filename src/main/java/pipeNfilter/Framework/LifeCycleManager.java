@@ -1,17 +1,17 @@
 /**
  * Copyright(c) 2021 All rights reserved by Jungho Kim in Myungji University.
  */
-package Framework;
+package pipeNfilter.Framework;
 
-import Components.Middle.MiddleFilter;
-import Components.Sink.SinkFilter;
-import Components.Source.SourceFilter;
+import pipeNfilter.Components.Middle.MiddleFilter;
+import pipeNfilter.Components.Sink.SinkFilter;
+import pipeNfilter.Components.Source.SourceFilter;
 
 public class LifeCycleManager {
     public static void main(String[] args) {
         try {
-            CommonFilter filter1 = new SourceFilter("Students.txt");
-            CommonFilter filter2 = new SinkFilter("Output.txt");
+            CommonFilter filter1 = new SourceFilter("src/main/java/resources/Students.txt");
+            CommonFilter filter2 = new SinkFilter("src/main/java/resources/Output.txt");
             CommonFilter filter3 = new MiddleFilter();
             
             filter1.connectOutputTo(filter3);

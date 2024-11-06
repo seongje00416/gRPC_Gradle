@@ -1,12 +1,12 @@
 /**
  * Copyright(c) 2021 All rights reserved by Jungho Kim in Myungji University.
  */
-package Components.Sink;
+package pipeNfilter.Components.Sink;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
-import Framework.CommonFilterImpl;
+import pipeNfilter.Framework.CommonFilterImpl;
 
 public class SinkFilter extends CommonFilterImpl{
     private String sinkFile;

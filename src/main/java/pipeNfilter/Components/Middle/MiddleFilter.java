@@ -1,10 +1,10 @@
 /**
  * Copyright(c) 2021 All rights reserved by Jungho Kim in Myungji University.
  */
-package Components.Middle;
+package pipeNfilter.Components.Middle;
 
 import java.io.IOException;
-import Framework.CommonFilterImpl;
+import pipeNfilter.Framework.CommonFilterImpl;
 
 public class MiddleFilter extends CommonFilterImpl{
     @Override
