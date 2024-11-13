@@ -1,4 +1,4 @@
-package pipeNfilter.Middle;
+package pipeNfilter.Middle.AddFilters;
 
 import pipeNfilter.Framework.CommonFilterImpl;
 
@@ -19,13 +19,20 @@ public class AddCourseFilter extends CommonFilterImpl {
         while(true) {
             while(byte_read != '\n' && byte_read != -1) {
                 byte_read = in.read();
-                if(byte_read != -1) buffer[idx++] = (byte)byte_read;
+                if(byte_read != -1 && byte_read != 13 ) buffer[idx++] = (byte)byte_read;
+                if(byte_read != -1 && byte_read == 13 ){
+                    buffer[idx++] = 32;
+                    for( char c : course ){
+                        buffer[idx++] = (byte)c;
+                    }
+                    buffer[idx++] = 13;
+                }
             }
-            for(int i = 0; i<idx; i++)
+            for( byte b : buffer ){
+                System.out.print( b + " | " + (char)b + "\n" );
+            }
+            for(int i = 0; i<idx; i++){
                 out.write((char)buffer[i]);
-            out.write( ' ' );
-            for( char c : this.course ){
-                out.write(c);
             }
             if (byte_read == -1) return true;
             idx = 0;

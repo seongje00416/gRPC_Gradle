@@ -1,13 +1,12 @@
-package pipeNfilter.Middle;
+package pipeNfilter.Middle.CheckFilter;
 
 import pipeNfilter.Framework.CommonFilterImpl;
 
 import java.io.IOException;
 
-public class CheckDepartmentFilter extends CommonFilterImpl {
-    protected char[] findDepartment;
-    public CheckDepartmentFilter( String department) { this.findDepartment = department.toCharArray(); }
-
+public class CheckNoneDepartmentFilter extends CommonFilterImpl {
+    protected char[] department;
+    public CheckNoneDepartmentFilter( String departmentName ){ this.department = departmentName.toCharArray(); }
     @Override
     public boolean specificComputationForFilter() throws IOException {
         int checkBlank = 4;
@@ -21,14 +20,14 @@ public class CheckDepartmentFilter extends CommonFilterImpl {
                 byte_read = in.read();
                 if(byte_read == ' ') numOfBlank++;
                 if(byte_read != -1) buffer[idx++] = (byte)byte_read;
-                if(numOfBlank > checkBlank && buffer[idx-3] == this.findDepartment[0] && buffer[idx-2] == this.findDepartment[1])
+                if(numOfBlank == checkBlank && buffer[idx-3] == this.department[0] && buffer[idx-2] == this.department[1])
                     isDepartment = true;
             }
-            if( isDepartment ){
+            if( !isDepartment ){
                 for(int i = 0; i<idx; i++)
                     out.write((char)buffer[i]);
-                isDepartment = false;
             }
+            isDepartment = false;
             if (byte_read == -1) return true;
             idx = 0;
             numOfBlank = 0;

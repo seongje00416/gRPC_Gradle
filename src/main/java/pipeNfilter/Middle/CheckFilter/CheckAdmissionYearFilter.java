@@ -1,4 +1,4 @@
-package pipeNfilter.Middle;
+package pipeNfilter.Middle.CheckFilter;
 
 import pipeNfilter.Framework.CommonFilterImpl;
 
@@ -10,7 +10,7 @@ public class CheckAdmissionYearFilter extends CommonFilterImpl {
     public CheckAdmissionYearFilter( String year ) {this.year = year.toCharArray();}
     @Override
     public boolean specificComputationForFilter() throws IOException {
-        int checkBlank = 0;
+        int checkBlank = 1;
         int numOfBlank = 0;
         int idx = 0;
         byte[] buffer = new byte[64];

@@ -23,7 +23,7 @@ public class SinkFilter extends CommonFilterImpl{
         // 파일에 데이터를 쓰기 위한 FileWriter 선언
         FileWriter fw = new FileWriter(this.sinkFile);
         while(true) {
-            byte_read = in.read(); 
+            byte_read = in.read();
             // 더이상 넘어오는 정보가 없는 경우 파일 작성을 마무리하도록 지정
             if (byte_read == -1) {
             	 fw.close();
