@@ -1,4 +1,4 @@
-package pipeNfilter.Middle.CheckFilter;
+package pipeNfilter.Middle.CheckFilter.Students;
 
 import pipeNfilter.Framework.CommonFilterImpl;
 

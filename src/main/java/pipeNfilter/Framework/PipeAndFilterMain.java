@@ -1,11 +1,11 @@
 package pipeNfilter.Framework;
 
-import pipeNfilter.Middle.AddFilters.AddCourseFilter;
 import pipeNfilter.Middle.AddFilters.AddCourseWhenUnRegistedFilter;
-import pipeNfilter.Middle.CheckFilter.CheckAdmissionYearFilter;
-import pipeNfilter.Middle.CheckFilter.CheckDepartmentFilter;
-import pipeNfilter.Middle.CheckFilter.CheckNoneDepartmentFilter;
-import pipeNfilter.Middle.CheckFilter.CheckUnRegisterCourseFilter;
+import pipeNfilter.Middle.CheckFilter.Courses.CheckNeedPreCoursesFilter;
+import pipeNfilter.Middle.CheckFilter.Courses.CheckRegisterPreCoursesFilter;
+import pipeNfilter.Middle.CheckFilter.Students.CheckAdmissionYearFilter;
+import pipeNfilter.Middle.CheckFilter.Students.CheckDepartmentFilter;
+import pipeNfilter.Middle.CheckFilter.Students.CheckNoneDepartmentFilter;
 import pipeNfilter.Middle.DeleteFilter.DeleteCourseWhenWrongRegisteredFilter;
 import pipeNfilter.Sink.SinkFilter;
 import pipeNfilter.Source.SourceFilter;
@@ -111,16 +111,46 @@ public class PipeAndFilterMain {
         }
     }
     static void homeworkB01(){
-        String courseFile = "src/main/java/resources/Courses.txt";
-        String studentFile = "src/main/java/resources/Students.txt";
-        // Homework B-01
-        String outputB01 = "src/main/java/resources/OutputB01.txt";
+        try{
+            String courseFile = "src/main/java/resources/Courses.txt";
+            String studentFile = "src/main/java/resources/Students.txt";
+            String outputB01 = "src/main/java/resources/Output-1.txt";
+            String outputB02 = "src/main/java/resources/Output-2.txt";
+
+            CommonFilter courseSourceFilter = new SourceFilter( courseFile );
+            CommonFilter checkNeedPreCourseFilter = new CheckNeedPreCoursesFilter();
+
+            CommonFilter studentSourceFilter = new SourceFilter( studentFile );
+            CommonFilter checkRegisterPreCoursesFilter = new CheckRegisterPreCoursesFilter();
+
+            CommonFilter fittedSinkFilter = new SinkFilter( outputB01 );
+            CommonFilter noneFittedSinkFilter = new SinkFilter( outputB02 );
+
+            // --------------------Filter 사이 Pipe들을 연결하는 부분----------------------------------------
+            courseSourceFilter.connectOutputTo( checkNeedPreCourseFilter );
+            checkNeedPreCourseFilter.connectOutputTo( checkRegisterPreCoursesFilter );
+            checkRegisterPreCoursesFilter.connectOutputTo( fittedSinkFilter );
+            // ------------------------------------------------------------------------------------------
+
+            Thread courseSourceThread = new Thread( courseSourceFilter );
+            Thread checkNeedPreCourseThread = new Thread( checkNeedPreCourseFilter );
+            Thread checkRegisterPreCoursesThread = new Thread( checkRegisterPreCoursesFilter );
+            Thread fittedSinkThread = new Thread( fittedSinkFilter );
+
+            courseSourceThread.start();
+            checkNeedPreCourseThread.start();
+            checkRegisterPreCoursesThread.start();
+            fittedSinkThread.start();
+        } catch( IOException e ){
+            //System.out.println( "ERROR" );
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
         //homeworkA01();
         //homeworkA02();
-        homeworkA03();
-        //homeworkB01();
+        //homeworkA03();
+        homeworkB01();
     }
 }
