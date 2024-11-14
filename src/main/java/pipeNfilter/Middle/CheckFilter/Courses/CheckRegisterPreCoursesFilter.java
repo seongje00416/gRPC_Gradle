@@ -19,13 +19,8 @@ public class CheckRegisterPreCoursesFilter extends MultiFilterImpl {
         int byte_read = 0;
         int blankNum = 0;
 
-        // Student Flow에 대한 변수들
-        int idx2 = 0;
-        byte[] buffer2 = new byte[64];
-        int byte_read2 = 0;
-        int blankNum2 = 0;
-        boolean isNeedPreCourses = false;
-        boolean isExistedPreCourses = false;
+        byte[] courseBuffer = new byte[128];
+        int courseBufferIndex = 0;
 
         // 선행 이수 과목이 존재하는 과목 Flow
         // 1사이클 = 1 과목
@@ -44,73 +39,150 @@ public class CheckRegisterPreCoursesFilter extends MultiFilterImpl {
                     preIdx++;
                 }
             }
-            // 해당 코스에 대해 학생 이수 여부 판단
-            // 1사이클 = 1학생
-            while( true ){
-                while( byte_read2 != '\n' && byte_read2 != -1) {
-                    byte_read2 = ins[1].read();
-                    if( byte_read2 == ' ' || byte_read2 == 10 ) blankNum2++;
-                    if( byte_read2 != -1 ) buffer2[idx2++] = (byte)byte_read2;
-                    // 수강 신청된 과목 목록
-                    if( blankNum2 > 4 && ( byte_read2 == ' ' || byte_read2 == 10 ) ) {
-                        // 선행 이수 과목이 필요한 과목을 신청했는지 확인
-                        if( byte_read2 != 10 ) {
-                            if(
-                                buffer2[idx2-6] == course[0] &&
-                                buffer2[idx2-5] == course[1] &&
-                                buffer2[idx2-4] == course[2] &&
-                                buffer2[idx2-3] == course[3] &&
-                                buffer2[idx2-2] == course[4]
-                            ) {
-                                isNeedPreCourses = true;
-                            }
-                            System.out.print( (char) buffer2[idx2-6] );
-                            System.out.print( (char) buffer2[idx2-5] );
-                            System.out.print( (char) buffer2[idx2-4] );
-                            System.out.print( (char) buffer2[idx2-3] );
-                            System.out.print( (char) buffer2[idx2-2] );
-                            System.out.print( (char) buffer2[idx2-1] ); // 32
-                        } else {
-                            if(
-                                buffer2[idx2-7] == course[0] &&
-                                buffer2[idx2-6] == course[1] &&
-                                buffer2[idx2-5] == course[2] &&
-                                buffer2[idx2-4] == course[3] &&
-                                buffer2[idx2-3] == course[4]
-                            ) {
-                                isNeedPreCourses = true;
-                            }
-                            System.out.print( (char) buffer2[idx2-7] );
-                            System.out.print( (char) buffer2[idx2-6] );
-                            System.out.print( (char) buffer2[idx2-5] );
-                            System.out.print( (char) buffer2[idx2-4] );
-                            System.out.print( (char) buffer2[idx2-3] );
-                            System.out.print( (char) buffer2[idx2-2] ); // 13
-                            System.out.print( (char) buffer2[idx2-1] ); // 10
-                        }
-                    }
-                }
-                System.out.println( isNeedPreCourses );
-                if( isNeedPreCourses ) isNeedPreCourses = false;
-                idx2 = 0;
-                if ( byte_read2 == -1 ) break;
-                byte_read2 = '\0';
-                blankNum2 = 0;
+            for( int i = 0; i<idx; i++ ) {
+                //System.out.print( buffer[i] );   // 선행 이수 과목이 있는 전체 과목 출력
+                courseBuffer[courseBufferIndex] = buffer[i];
+                courseBufferIndex++;
             }
-
-            // DEBUGGING
-            //for( int i = 0; i<idx; i++ ) System.out.print( (char)buffer[i] );   // 선행 이수 과목이 있는 전체 과목 출력
-            //for( byte b : course ) System.out.print( (char)b );               // 현재 과목 번호 출력
-//            System.out.println();
-//            for( int i = 0; i<preIdx; i++ ){
-//                System.out.print( (char)preCourses[i] );                      // 해당 과목에 대한 선행 이수 과목 출력
-//            }
-
-            if (byte_read == -1) return true;
+            courseBuffer[courseBufferIndex] = -1;
+            if (byte_read == -1) break;
             idx = 0;
             preIdx = 0;
             blankNum = 0;
             byte_read = '\0';
+        }
+        //for( int i = 0; i < courseBufferIndex; i++ ) System.out.print( (char)courseBuffer[i] );
+
+        // Student Flow에 대한 변수들
+        int checkBlank2 = 4;
+        int blankNum2 = 0;
+        int idx2 = 0;
+        byte[] buffer2 = new byte[64];
+        int byte_read2 = 0;
+        boolean isNeedPreCourse = false;
+        boolean[] isRegisterPreCourses = new boolean[2];
+        int booleanIndex = 0;
+        while( true ){
+            while( byte_read2 != '\n' && byte_read2 != -1 ){
+                byte_read2 = ins[1].read();
+                if(byte_read2 == ' ') blankNum2++;
+                if(byte_read2 != -1) buffer2[idx2++] = (byte)byte_read2;
+                // 대상 강의 수강 여부 확인
+                boolean isPreCourse = false;
+                // 강좌 매칭 로직
+                // 17651을 듣는 학생들을 가져오는 로직
+                if( blankNum2 > 4 ){
+                    int pos = 0;
+                    byte current = 0;       // courseBuffer에서 가져오는 현재 바이트값
+                    while( current != -1 ){
+                        while( current != 10 ){
+                            //System.out.println( current );
+                            int courseBlank = 0;
+                            current = courseBuffer[pos];
+                            if( current == -1 ) break;
+                            if( current == ' ' ) courseBlank++;
+                            if( current == 32 ){
+                                // CourseBuffer에서 공백을 발견한 경우
+                                if( courseBlank == 1 ){
+                                    // Student 목록에서 공백을 발견한 경우
+                                    if( byte_read2 == 32 ){
+                                        if(
+                                            courseBuffer[pos-5] == buffer2[idx2-6] &&
+                                            courseBuffer[pos-4] == buffer2[idx2-5] &&
+                                            courseBuffer[pos-3] == buffer2[idx2-4] &&
+                                            courseBuffer[pos-2] == buffer2[idx2-3] &&
+                                            courseBuffer[pos-1] == buffer2[idx2-2]
+                                        ) isNeedPreCourse = true;
+                                    }
+                                    // Student 목록에서 개행을 발견한 경우
+                                    else if( byte_read2 == 13 ){
+                                        if(
+                                            courseBuffer[pos-5] == buffer2[idx2-8] &&
+                                            courseBuffer[pos-4] == buffer2[idx2-7] &&
+                                            courseBuffer[pos-3] == buffer2[idx2-6] &&
+                                            courseBuffer[pos-2] == buffer2[idx2-5] &&
+                                            courseBuffer[pos-1] == buffer2[idx2-4]
+                                        ) isNeedPreCourse = true;
+                                    }
+                                } else if( courseBlank > 1 ){
+                                    if( byte_read2 == 32 ){
+                                        if(
+                                            courseBuffer[pos-5] == buffer2[idx2-6] &&
+                                            courseBuffer[pos-4] == buffer2[idx2-5] &&
+                                            courseBuffer[pos-3] == buffer2[idx2-4] &&
+                                            courseBuffer[pos-2] == buffer2[idx2-3] &&
+                                            courseBuffer[pos-1] == buffer2[idx2-2]
+                                        ) {
+                                            isRegisterPreCourses[booleanIndex] = true;
+                                            booleanIndex++;
+                                        }
+                                    }
+                                    // Student 목록에서 개행을 발견한 경우
+                                    else if( byte_read2 == 13 ){
+                                        if(
+                                            courseBuffer[pos-5] == buffer2[idx2-8] &&
+                                            courseBuffer[pos-4] == buffer2[idx2-7] &&
+                                            courseBuffer[pos-3] == buffer2[idx2-6] &&
+                                            courseBuffer[pos-2] == buffer2[idx2-5] &&
+                                            courseBuffer[pos-1] == buffer2[idx2-4]
+                                        ) {
+                                            isRegisterPreCourses[booleanIndex] = true;
+                                            booleanIndex++;
+                                        }
+                                    }
+                                }
+                            }
+                            else if( current == 13 ){
+                                if( byte_read2 == 32 ){
+                                    if(
+                                        courseBuffer[pos-7] == buffer2[idx2-6] &&
+                                        courseBuffer[pos-6] == buffer2[idx2-5] &&
+                                        courseBuffer[pos-5] == buffer2[idx2-4] &&
+                                        courseBuffer[pos-4] == buffer2[idx2-3] &&
+                                        courseBuffer[pos-3] == buffer2[idx2-2]
+                                    ) {
+                                        isRegisterPreCourses[booleanIndex] = true;
+                                        booleanIndex++;
+                                    }
+                                }
+                                // Student 목록에서 개행을 발견한 경우
+                                else if( byte_read2 == 13 ){
+                                    if(
+                                        courseBuffer[pos-7] == buffer2[idx2-8] &&
+                                        courseBuffer[pos-6] == buffer2[idx2-7] &&
+                                        courseBuffer[pos-5] == buffer2[idx2-6] &&
+                                        courseBuffer[pos-4] == buffer2[idx2-5] &&
+                                        courseBuffer[pos-3] == buffer2[idx2-4]
+                                    ) {
+                                        isRegisterPreCourses[booleanIndex] = true;
+                                        booleanIndex++;
+                                    }
+                                }
+                            }
+                            pos++;
+                        }
+                        if( current == 10 ) current = courseBuffer[pos];;
+                    }
+                }
+            }
+            // 학생 한 줄에 대한 로직
+            // byte_read == 10: 강의 1개에 대한 작업 종료 ( 단, 10이 나오기 -1 ~ -2 인덱스에는 13 값이 들어있음
+            // blankNum2 == 1: 대상 강의
+            // blankNum2 > 1: 선행 이수 강의
+            if( isNeedPreCourse ){
+                for( int i = 0; i < idx2; i++ ){
+                    System.out.print( (char)buffer2[i] );
+                }
+            }
+            // 대상 강의 수강 여부 확인
+
+            // ---------------------
+            if (byte_read2 == -1) return true;
+            idx2 = 0;
+            blankNum2 = 0;
+            byte_read2 = '\0';
+            isNeedPreCourse = false;
+            booleanIndex = 0;
         }
     }
 }

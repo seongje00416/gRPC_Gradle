@@ -156,9 +156,9 @@ public class PipeAndFilterMain {
     }
 
     public static void main(String[] args) {
-        //homeworkA01();
+        homeworkA01();
         //homeworkA02();
         //homeworkA03();
-        homeworkB01();
+        //homeworkB01();
     }
 }
