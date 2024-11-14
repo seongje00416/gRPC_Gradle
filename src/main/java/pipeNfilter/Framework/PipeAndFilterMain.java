@@ -129,18 +129,26 @@ public class PipeAndFilterMain {
             // --------------------Filter 사이 Pipe들을 연결하는 부분----------------------------------------
             courseSourceFilter.connectOutputTo( checkNeedPreCourseFilter );
             checkNeedPreCourseFilter.connectOutputTo( checkRegisterPreCoursesFilter );
+
+            studentSourceFilter.connectOutputTo( checkRegisterPreCoursesFilter );
+
             checkRegisterPreCoursesFilter.connectOutputTo( fittedSinkFilter );
+            checkRegisterPreCoursesFilter.connectOutputTo( noneFittedSinkFilter );
             // ------------------------------------------------------------------------------------------
 
             Thread courseSourceThread = new Thread( courseSourceFilter );
             Thread checkNeedPreCourseThread = new Thread( checkNeedPreCourseFilter );
+            Thread studentSourceThread = new Thread( studentSourceFilter );
             Thread checkRegisterPreCoursesThread = new Thread( checkRegisterPreCoursesFilter );
             Thread fittedSinkThread = new Thread( fittedSinkFilter );
+            Thread nonFittedSinkThread = new Thread( noneFittedSinkFilter );
 
             courseSourceThread.start();
             checkNeedPreCourseThread.start();
             checkRegisterPreCoursesThread.start();
             fittedSinkThread.start();
+            studentSourceThread.start();
+            nonFittedSinkThread.start();
         } catch( IOException e ){
             //System.out.println( "ERROR" );
             e.printStackTrace();
