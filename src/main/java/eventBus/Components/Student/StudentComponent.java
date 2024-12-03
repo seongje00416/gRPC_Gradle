@@ -38,6 +38,23 @@ public class StudentComponent {
 		fileWriter.flush();
 		fileWriter.close();
 	}
+	public void signUpCourse( String studentID, String courseID ) throws IOException {
+		FileWriter fileWriter = new FileWriter( this.studentFileName );
+		String line = "";
+		for( Student student : vStudent ){
+			line = line + student.getStudentID() + " " + student.getName();
+			if( student.getCompletedCourses().size() != 0 ){
+				for( String course : student.getCompletedCourses() ){
+					line = line + " " + course;
+				}
+			}
+			if( student.getStudentID().equals( studentID ) ) line += " " + courseID;
+			line = line + '\n';
+		}
+		fileWriter.write( line );
+		fileWriter.flush();
+		fileWriter.close();
+	}
 	public ArrayList<Student> getStudentList() {
 		return vStudent;
 	}

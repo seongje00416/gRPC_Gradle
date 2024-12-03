@@ -15,5 +15,6 @@ public enum EventId {
     DeleteStudents,
     RegisterCourses,
     DeleteCourses,
+    SignUpCourse,
     QuitTheSystem
 }
