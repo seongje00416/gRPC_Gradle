@@ -20,7 +20,7 @@ public class StudentMain {
 		long componentId = eventBus.register();
 		System.out.println("** StudentMain(ID:" + componentId + ") is successfully registered. \n");
 
-		StudentComponent studentsList = new StudentComponent("Students.txt");
+		StudentComponent studentsList = new StudentComponent("src/main/java/eventBus/Students.txt");
 		Event event = null;
 		boolean done = false;
 		while (!done) {

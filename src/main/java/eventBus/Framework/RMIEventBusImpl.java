@@ -20,9 +20,12 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 	}
 	public static void main(String args[]) {
 		try {
+			System.setProperty( "java.rmi.server.hostname", "localhost" );
+			java.rmi.registry.LocateRegistry.createRegistry(1099);
+
 			RMIEventBusImpl eventBus = new RMIEventBusImpl();
-	      		Naming.bind("EventBus", eventBus);
-	      		System.out.println("Event Bus is running now...");
+			Naming.rebind("//localhost/EventBus", eventBus);
+			System.out.println("Event Bus is running now...");
 		} catch (Exception e) {
 			System.out.println("Event bus startup error: " + e);
 		}
