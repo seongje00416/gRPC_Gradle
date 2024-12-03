@@ -121,6 +121,7 @@ public class ClientInputMain {
 		System.out.println("3. Register a new Student");
 		System.out.println("4. Register a new Course");
 		System.out.println("5. Delete Student");
+		System.out.println("6. Delete Course");
 		System.out.println("0. Quit the system");
 		System.out.print("\n Choose No.: ");
 	}
