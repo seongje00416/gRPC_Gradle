@@ -46,6 +46,10 @@ public class StudentMain {
 					eventBus.unRegister(componentId);
 					done = true;
 					break;
+				case DeleteStudents:
+					printLogEvent( "Get", event );
+					eventBus.sendEvent( new Event( EventId.ClientOutput, deleteStudents(studentsList, event.getMessage()) ));
+					break;
 				default:
 					break;
 				}
@@ -66,6 +70,20 @@ public class StudentMain {
 			returnString += studentsList.getStudentList().get(j).getString() + "\n";
 		}
 		return returnString;
+	}
+	private static String deleteStudents( StudentComponent studentList, String studentID ) throws IOException {
+		int index = -1;
+		for( int i = 0; i < studentList.vStudent.size(); i++ ){
+			if( studentList.vStudent.get(i).getStudentID().equals( studentID ) ) {
+				index = i;
+				break;
+			}
+		}
+		if( index == -1 ) return "Student is not Existed";
+
+		studentList.vStudent.remove( index );
+		studentList.refreshStudentFile();
+		return "Student Deleted!";
 	}
 	private static void printLogEvent(String comment, Event event) {
 		System.out.println(

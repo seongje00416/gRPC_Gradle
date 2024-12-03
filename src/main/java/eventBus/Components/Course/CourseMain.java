@@ -40,6 +40,10 @@ public class CourseMain {
 					printLogEvent("Get", event);
 					eventBus.sendEvent(new Event(EventId.ClientOutput, registerCourse(coursesList, event.getMessage())));
 					break;
+				case DeleteCourses:
+					printLogEvent( "Get", event);
+					eventBus.sendEvent( new Event( EventId.ClientOutput, deleteCourses( coursesList, event.getMessage())));
+					break;
 				case QuitTheSystem:
 					eventBus.unRegister(componentId);
 					done = true;
@@ -64,6 +68,20 @@ public class CourseMain {
 			returnString += coursesList.getCourseList().get(j).getString() + "\n";
 		}
 		return returnString;
+	}
+	private static String deleteCourses( CourseComponent courseList, String courseID ) throws IOException {
+		int index = -1;
+		for( int i = 0; i < courseList.vCourse.size(); i++ ){
+			if( courseList.vCourse.get(i).getCourseId().equals( courseID ) ) {
+				index = i;
+				break;
+			}
+		}
+		if( index == -1 ) return "Course is not Existed";
+
+		courseList.vCourse.remove( index );
+		courseList.refreshCourseFile();
+		return "Course Deleted!";
 	}
 	private static void printLogEvent(String comment, Event event) {
 		System.out.println(

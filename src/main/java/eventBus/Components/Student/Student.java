@@ -29,6 +29,7 @@ public class Student {
 	public String getName() {
 		return this.name;
 	}
+	public String getStudentID() { return this.studentId; }
 	public ArrayList<String> getCompletedCourses() {
 		return this.completedCoursesList;
 	}

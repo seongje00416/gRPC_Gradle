@@ -24,6 +24,7 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 			java.rmi.registry.LocateRegistry.createRegistry(1099);
 
 			RMIEventBusImpl eventBus = new RMIEventBusImpl();
+			// EventBus라는 이름으로 lookup되도록 강제 지정
 			Naming.rebind("//localhost/EventBus", eventBus);
 			System.out.println("Event Bus is running now...");
 		} catch (Exception e) {

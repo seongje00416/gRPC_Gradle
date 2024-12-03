@@ -4,16 +4,16 @@
 
 package eventBus.Components.Student;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class StudentComponent {
 	protected ArrayList<Student> vStudent;
+	private String studentFileName;
 	
 	public StudentComponent(String sStudentFileName) throws FileNotFoundException, IOException {
+		this.studentFileName = sStudentFileName;
+
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(sStudentFileName));
 		this.vStudent = new ArrayList<Student>();
 		while (bufferedReader.ready()) {
@@ -21,6 +21,22 @@ public class StudentComponent {
 			if (!stuInfo.equals("")) this.vStudent.add(new Student(stuInfo));
 		}
 		bufferedReader.close();
+	}
+	public void refreshStudentFile() throws IOException {
+		FileWriter fileWriter = new FileWriter( this.studentFileName );
+		String line = "";
+		for( Student student : vStudent ){
+			line = line + student.getStudentID() + " " + student.getName();
+			if( student.getCompletedCourses().size() != 0 ){
+				for( String course : student.getCompletedCourses() ){
+					line = line + " " + course;
+				}
+			}
+			line = line + '\n';
+		}
+		fileWriter.write( line );
+		fileWriter.flush();
+		fileWriter.close();
 	}
 	public ArrayList<Student> getStudentList() {
 		return vStudent;
