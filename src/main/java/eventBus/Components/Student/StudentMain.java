@@ -15,7 +15,7 @@ import eventBus.Framework.EventQueue;
 import eventBus.Framework.RMIEventBus;
 
 public class StudentMain {
-	public static void main(String args[]) throws FileNotFoundException, IOException, NotBoundException {
+	public static void main(String[] args) throws FileNotFoundException, IOException, NotBoundException {
 		RMIEventBus eventBus = (RMIEventBus) Naming.lookup("EventBus");
 		long componentId = eventBus.register();
 		System.out.println("** StudentMain(ID:" + componentId + ") is successfully registered. \n");
