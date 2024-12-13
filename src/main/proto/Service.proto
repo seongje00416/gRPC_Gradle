@@ -109,6 +109,7 @@ message KeyMessage {
   }
 }
 
+// Service
 service GetPublicKeyService {
   rpc getPublicKey( KeyMessage.GetPublicKeyRequest ) returns ( KeyMessage.GetPublicKeyResponse ){}
 }
